@@ -1,13 +1,14 @@
 import {UserData, CREATE_USER, ActionType, AUTH_USER, SET_USER_VALUE, SET_LOGIN_IN, SET_USER_TABLE} from '../type';
 
 const INIT_VALUES: UserData = {
-    user: {
+    data: {
         email: '',
-        password: '',
         full_name: ''
     },
     isLoggedIn: false,
-    db: null
+    status: null,
+    message: ''
+
 }
 
 const UserReducer = (state = INIT_VALUES, action: ActionType) => {
@@ -37,7 +38,7 @@ const UserReducer = (state = INIT_VALUES, action: ActionType) => {
             return {
                 ...state,
                 user: {
-                    ...state.user,
+                    ...state.data,
                     email: action.payload.Email,
                     full_name: action.payload.NAME,
                 }
