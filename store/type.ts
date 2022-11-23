@@ -8,15 +8,18 @@ export type TopStory = {
 }
 
 export type UserData = {
-    user: User,
+    data: User,
+    status: any
+    message?: string
     isLoggedIn: boolean
-    db?: any
 }
 
 export type User = {
-    email: string
-    full_name: string
-    password: string
+    _id?: string,
+    email?: string
+    full_name?: string
+    phone_number?: string
+    otp?:string
 }
 
 export type Story = {
@@ -37,6 +40,10 @@ export const PAGINATE = 'PAGINATE';
 
 export const CREATE_USER = 'CREATE_USER';
 export const AUTH_USER = 'AUTH_USER';
+export const OPT_USER = 'OTP_USER';
+export const CATEGORY_TYPE = 'CATEGORY_TYPE';
+
+export const CLEAR_USER_DATA = 'CLEAR_USER_DATA';
 
 export const SET_LOGIN_IN = 'SET_LOGIN_IN';
 export const SET_USER_TABLE = 'SET_USER_TABLE';

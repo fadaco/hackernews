@@ -1,5 +1,9 @@
-export const BASE_URL = 'https://hacker-news.firebaseio.com/v0';
+export const BASE_URL = 'https://krossbirdsapp-production.up.railway.app/api';
 export const TOP_STORIES_IDS = '/topstories.json?print=pretty';
+export const EMAIL_AND_PHONE_LOGIN = '/user';
+export const VERIFY_OTP = '/verify-otp';
+export const CATEGORY = (name: string) => `/category/${name}`
+
 export const STORIES_DETAIL = (id: number) =>  `/item/${id}.json`;
 
 export const SERVER_REQUEST = async (url: string, type: string, body: any = null) => {
@@ -28,3 +32,61 @@ export const SERVER_REQUEST = async (url: string, type: string, body: any = null
         return error;
     }
 }
+
+
+export const FONT_CONFIG = {
+    web: {
+      regular: {
+        fontFamily: 'sans-serif',
+        fontWeight: 'normal',
+      },
+      medium: {
+        fontFamily: 'sans-serif-medium',
+        fontWeight: 'normal',
+      },
+      light: {
+        fontFamily: 'sans-serif-light',
+        fontWeight: 'normal',
+      },
+      thin: {
+        fontFamily: 'sans-serif-thin',
+        fontWeight: 'normal',
+      },
+    },
+    ios: {
+      regular: {
+        fontFamily: 'Averta',
+        fontWeight: 'normal',
+      },
+      medium: {
+        fontFamily: 'Averta',
+        fontWeight: 'normal',
+      },
+      light: {
+        fontFamily: 'Averta',
+        fontWeight: 'normal',
+      },
+      thin: {
+        fontFamily: 'Averta',
+        fontWeight: 'normal',
+      },
+    },
+    android: {
+      regular: {
+        fontFamily: 'Averta',
+        fontWeight: 'normal',
+      },
+      medium: {
+        fontFamily: 'Averta',
+        fontWeight: 'normal',
+      },
+      light: {
+        fontFamily: 'Averta',
+        fontWeight: 'normal',
+      },
+      thin: {
+        fontFamily: 'Averta',
+        fontWeight: 'normal',
+      },
+    }
+  };

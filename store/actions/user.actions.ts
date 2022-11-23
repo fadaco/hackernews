@@ -13,3 +13,4 @@ export const setUserTable = (data: any) => async (dispatch: Dispatch) => {
 export const setUserValue = (data: any) => async (dispatch: Dispatch) => {
      dispatch({type: SET_USER_VALUE, payload: data})
 }
+
