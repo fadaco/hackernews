@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react'
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
-import TextTypo from '../components/textTypo';
 import { Avatar} from 'react-native-paper';
 import { Actions, ActionsProps, GiftedChat } from 'react-native-gifted-chat'
 import * as ImagePicker from 'expo-image-picker';
@@ -15,7 +14,6 @@ export default function Chatcreen() {
     }, [])
 
     const handlePickImage = async () => {
-        // No permissions request is necessary for launching the image library
         try {
           const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync()
     
@@ -26,7 +24,6 @@ export default function Chatcreen() {
           }
         } catch (error) {
          // console.log(error)
-          
         }
        
       };
