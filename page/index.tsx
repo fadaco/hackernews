@@ -69,12 +69,10 @@ export default function Home() {
                 headerShadowVisible: false,
             }}>
                 <Stack.Screen name="match" component={matchScreen} options={{
-                       headerTitle: ''
+                       headerShown: false
                 }} />
                 
-                 <Stack.Screen name="chat" component={chatcreen} options={{
-                      headerShown: false
-                }} />
+                 <Stack.Screen name="chat" component={chatcreen}  />
                 
             </Stack.Navigator>
         )

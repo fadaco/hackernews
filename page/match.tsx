@@ -37,7 +37,7 @@ const data = [
 
 export default function MatchScreen({navigation}: any) {
     return (
-        <SafeAreaView style={{ paddingHorizontal: 20 }}>
+        <SafeAreaView style={{ paddingHorizontal: 20, backgroundColor: '#ffffff' }}>
           <TextTypo size={18} color="#251E1C" mt={20} title="New Matches"/>
             <FlatList
                 showsHorizontalScrollIndicator={false}
