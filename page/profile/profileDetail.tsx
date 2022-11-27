@@ -1,32 +1,65 @@
-import { View, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
+import {  useState, useCallback } from 'react';
+import { View, StyleSheet, Image, ScrollView, TouchableOpacity, FlatList } from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
+import { setUpProfile } from '../../store/actions/onboarding.actions';
 import {Text,Chip, TextInput, Avatar } from 'react-native-paper';
-import { useSelector } from 'react-redux';
+import { useSelector , useDispatch} from 'react-redux';
+import { useFocusEffect } from '@react-navigation/native';
+import { getUser } from '../../store/actions/onboarding.actions';
 import TextTypo from '../../components/textTypo';
 
-
 export default function ProfileDetailScreen({navigation}: any) {
-  const { user } = useSelector((state: any) => state.user);
+    const { percentage_completed, interests, identify_as, height, workout, drinking, smoking, education, searching_for, religion, about_me } = useSelector((state: any) => state.onboarding);
+    const dispatch: any = useDispatch();
+    const [text, setText] = useState<string>(about_me);
+
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         dispatch(getUser())
+    //     }, [])
+    // );
+    
+
+    const handleAboutUs = async (e: any) => {
+        setText(e.nativeEvent.text)
+        await setUpProfile({
+            type: 'about_me',
+            name: e.nativeEvent.text
+        })
+    }
+    
+     
     return (
         <SafeAreaView style={styles.main}>
-          <ScrollView style={styles.container}>
-        <View>
+            <FlatList style={styles.container}
+                  keyExtractor={(item, index) => index.toString()}      
+                  data={[1]}
+                renderItem={({ item }) => (
+                    <View>
             <View style={{backgroundColor: '#9792ab', padding: 10, borderRadius: 5}}>
                 <TextTypo title="Profile Strength"/>
              <View style={styles.profileRangeContainer}>
-                <View style={styles.profileRange}/>    
+                <View style={[styles.profileRange, {width:percentage_completed + '%' }]}/>    
                     </View>
-                        <TextTypo title="40%"/>
+                        <TextTypo title={(percentage_completed > 100 ? 100 : percentage_completed) + '%'}/>
 
                 </View>
                 
                 <View style={{marginTop: 40}}>
                     <TextTypo title="Interests" />
                     <View style={styles.direction}>
-                        <View style={{marginVertical: 10}}>
-                                <Chip>
-                                    <TextTypo title="Music"/>
-                            </Chip>
+                            <View style={{ marginVertical: 10 }}>
+                                <FlatList
+                                 keyExtractor={(item, index) => index.toString()}      
+                                    numColumns={3} data={interests}
+                                    renderItem={({ item, index }) => (
+                                        <Chip key={index}  style={{margin: 4}}>
+                                        <TextTypo title={ item} />
+                                    </Chip>
+                                    )}
+
+                                />
+                    
                         </View>
                         <View></View>
                     </View>
@@ -34,7 +67,7 @@ export default function ProfileDetailScreen({navigation}: any) {
 
                 <View style={{marginTop: 40}}>
                 <TextTypo title="About me"/>
-                    <TextInput style={{fontFamily: 'Averta'}} numberOfLines={8} placeholder='Write something about yourself' multiline/>
+                    <TextInput value={text}  onEndEditing={(e) => handleAboutUs(e)} style={{fontFamily: 'Averta'}} numberOfLines={8} placeholder='Write something about yourself' multiline/>
                 </View>
 
                 <View style={{marginTop: 40}}>
@@ -50,7 +83,7 @@ export default function ProfileDetailScreen({navigation}: any) {
                 <View style={{marginTop: 40}}>
                         <TextTypo title="Personal information" />
                     <TouchableOpacity style={styles.tabContainer}>
-                        <View><Text style={{color: '#9E9B9A', fontFamily: 'Averta',}}>Male (Gender)</Text></View>
+                        <View><TextTypo color="#9E9B9A" title={identify_as + " (Gender)"} /></View>
                         <View>
                         <Avatar.Icon style={{backgroundColor: '#F4F4F4'}} size={24} icon="greater-than" />
                         </View>
@@ -71,9 +104,10 @@ export default function ProfileDetailScreen({navigation}: any) {
 
                 <View style={{marginTop: 40}}>
                     <TouchableOpacity style={styles.tabContainer}>
-                        <View style={styles.directions}>
+                            <View style={styles.directions}>
+                          
                             <Image source={require('../../assets/icons/height.png')}/>
-                            <Text style={styles.text}>Height 185cm</Text>
+                                <TextTypo color="#9E9B9A" ml={10} title={ 'Height ' + height} />
                         </View>
                         <View>
                         <Avatar.Icon style={{backgroundColor: '#F4F4F4'}} size={24} icon="greater-than" />
@@ -84,7 +118,7 @@ export default function ProfileDetailScreen({navigation}: any) {
                     })}>
                         <View style={styles.directions}>
                             <Image source={require('../../assets/icons/workout.png')}/>
-                            <Text style={styles.text}>Workout</Text>
+                            <TextTypo color="#9E9B9A" ml={10} title={workout} />
                         </View>
                         <View>
                         <Avatar.Icon style={{backgroundColor: '#F4F4F4'}} size={24} icon="greater-than" />
@@ -95,7 +129,7 @@ export default function ProfileDetailScreen({navigation}: any) {
                     })}>
                         <View style={styles.directions}>
                             <Image source={require('../../assets/icons/drinking.png')}/>
-                            <Text style={styles.text}>Drinking</Text>
+                            <TextTypo color="#9E9B9A" ml={10} title={drinking} />
                         </View>
                         <View>
                         <Avatar.Icon style={{backgroundColor: '#F4F4F4'}} size={24} icon="greater-than" />
@@ -106,7 +140,7 @@ export default function ProfileDetailScreen({navigation}: any) {
                     })}>
                         <View style={styles.directions}>
                             <Image source={require('../../assets/icons/smoking.png')}/>
-                            <Text style={styles.text}>Smoking</Text>
+                            <TextTypo color="#9E9B9A" ml={10} title={smoking} />
                         </View>
                         <View>
                         <Avatar.Icon style={{backgroundColor: '#F4F4F4'}} size={24} icon="greater-than" />
@@ -117,7 +151,7 @@ export default function ProfileDetailScreen({navigation}: any) {
                     })}>
                         <View style={styles.directions}>
                             <Image source={require('../../assets/icons/education.png')}/>
-                            <Text style={styles.text}>Education</Text>
+                            <TextTypo color="#9E9B9A" ml={10} title={education} />
                         </View>
                         <View>
                         <Avatar.Icon style={{backgroundColor: '#F4F4F4'}} size={24} icon="greater-than" />
@@ -128,7 +162,7 @@ export default function ProfileDetailScreen({navigation}: any) {
                     })}>
                         <View style={styles.directions}>
                             <Image source={require('../../assets/icons/search.png')}/>
-                            <Text style={styles.text}>Searching For</Text>
+                            <TextTypo color="#9E9B9A" ml={10} title={searching_for} />
                         </View>
                         <View>
                         <Avatar.Icon style={{backgroundColor: '#F4F4F4'}} size={24} icon="greater-than" />
@@ -139,7 +173,7 @@ export default function ProfileDetailScreen({navigation}: any) {
                     })}>
                         <View style={styles.directions}>
                         <Image source={require('../../assets/icons/religion.png')}/>
-                                <Text style={styles.text}>Religion</Text>
+                        <TextTypo color="#9E9B9A" ml={10} title={religion} />
                             </View>
                         <View>
                         <Avatar.Icon style={{backgroundColor: '#F4F4F4'}} size={24} icon="greater-than" />
@@ -149,8 +183,9 @@ export default function ProfileDetailScreen({navigation}: any) {
 
 
         </View>
-            
-            </ScrollView>
+            )}
+            />
+        
             </SafeAreaView>
     )
 }
@@ -181,7 +216,6 @@ const styles = StyleSheet.create({
         marginVertical: 15
     },
     profileRange: {
-        width: '40%',
         height: 6,
         backgroundColor: '#6b4ead'
     },

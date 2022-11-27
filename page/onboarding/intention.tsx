@@ -1,35 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import SafeAreaView from 'react-native-safe-area-view';
-import { View, Text, StyleSheet } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux'
-import { getCategory } from '../../store/actions/onboarding.actions';
-import { RadioButton } from 'react-native-paper';
-import {User} from '../../store/type'
+import { View, StyleSheet } from 'react-native';
+import { setUpProfile } from '../../store/actions/onboarding.actions';
+import { RadioButton, Snackbar} from 'react-native-paper';
 import TextTypo from '../../components/textTypo';
 import Footer from '../../components/footer';
+import { INTENTIONS } from '../../data';
 
 export default function IntentionScreen({ navigation }: any) {
-  const [categories, setCategories] = useState<string[]>([])
+  const [loading, setLoading] = useState<boolean>(false);
+  const [categories, setCategories] = useState<string[]>(INTENTIONS)
   const [value, setValue] = useState<string>('')
-  const [userParam, setUserParam] = useState<User>({
-    full_name: '',
-    email: '',
-  })
-  
-  useEffect(() => {
-    getCategory('intentions').then((res) => setCategories(res.data))
-  }, [])
-
-   const [message, setMessage] = useState<string>('')
-
-
-  const handleUserInput = (text: string, type: string) => {
-    setMessage('');
-    setUserParam({
-      ...userParam,
-      [type]: text
-    })
-  }
+  const [message, setMessage] = useState<string>('')
 
   return (
     <SafeAreaView style={styles.container}>
@@ -44,8 +26,21 @@ export default function IntentionScreen({ navigation }: any) {
             }} value={category} />
           </View>
         ))}
-             </RadioButton.Group> : <></>}
-      <Footer title="Next" submitData={() => navigation.navigate('interestedIn')}/>
+      </RadioButton.Group> : <></>}
+      <Snackbar style={styles.snackbar} visible={message !== ''} onDismiss={() => setMessage('')}>{message}</Snackbar>
+      <Footer loading={loading} title="Next" submitData={async () => {
+         setLoading(true)
+         const response = await setUpProfile({
+           type: 'intention',
+           name: value
+         })
+         if (response.status) {
+          navigation.navigate('interestedIn')
+         } else {
+           setMessage(response.message)
+           }
+           setLoading(false)
+      }} />
     </SafeAreaView>
   )
 }
@@ -65,5 +60,8 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     height: 70,
     justifyContent: 'center'
+  },
+  snackbar: {
+    marginTop: 100
   }
   });

@@ -1,6 +1,9 @@
 import { FlatList, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
 import TextTypo from '../components/textTypo';
+import { useSelector, useDispatch } from 'react-redux';
+import { dispatchUserDetailToChat } from '../store/actions/match.actions';
+import { EMPTY_URL } from '../config';
 
 const data = [
     {
@@ -35,36 +38,55 @@ const data = [
     }
 ]
 
-export default function MatchScreen({navigation}: any) {
+export default function MatchScreen({ navigation }: any) {
+    const { _id } = useSelector((state: any) => state.onboarding);
+    const { user_matches, conversation_list } = useSelector((state: any) => state.match);
+    const dispatch: any = useDispatch();
     return (
-        <SafeAreaView style={{ paddingHorizontal: 20, backgroundColor: '#ffffff' }}>
-          <TextTypo size={18} color="#251E1C" mt={20} title="New Matches"/>
+        <SafeAreaView style={{ paddingHorizontal: 20, backgroundColor: '#ffffff', flex: 1}}>
+            <TextTypo size={18} color="#251E1C" mt={20} title="New Matches" />
+            <View>
             <FlatList
                 showsHorizontalScrollIndicator={false}
                 horizontal
                 keyExtractor={(item, index) => index.toString()}  
-                data={data}
+                data={user_matches}
                 renderItem={({ item, index }) => (
-                    <View key={index} style={styles.imageContainer}>
-                        <Image style={styles.image} source={item.icon} />
-                     </View>
+                    <TouchableOpacity onPress={() => {
+                        dispatch(dispatchUserDetailToChat(item))
+                        navigation.navigate('chat', {
+                            chats: []
+                        })
+                    }} key={index} style={styles.imageContainer}>
+                        <Image style={styles.image} source={{
+                            uri: item.images.length ? item.images[0].image : EMPTY_URL
+                        }} />
+                     </TouchableOpacity>
                 )}
-
-            />
+                />
+                </View>
             <TextTypo size={18} color="#251E1C" mt={20} title="Chats" />
             
+            {/* <View style={{flex: 1}}> */}
             <FlatList
                 keyExtractor={(item, index) => index.toString()}  
-                data={data}
+                data={conversation_list}
                 renderItem={({ item, index }) => (
-                    <TouchableOpacity style={styles.chat} onPress={() => navigation.navigate('chat')}>
+                    <TouchableOpacity style={styles.chat} onPress={() => {
+                        dispatch(dispatchUserDetailToChat(item))
+                        navigation.navigate('chat', {
+                            chats: item.user_chats[_id]
+                        })
+                    }}>
                             <View style={{flexDirection: 'row'}}>
                                 <View key={index} style={styles.imageContainerChat}>
-                                    <Image style={styles.imageChat} source={item.icon} />
+                                <Image style={styles.imageChat} source={{
+                                        uri: item.images.length ? item.images[0].image : EMPTY_URL
+                                    }} />
                                 </View>
                                 <View>
-                                    <TextTypo fw="bold" mb={15} title={item.name} />
-                                    <TextTypo title={item.chat} />
+                                    <TextTypo fw="bold" mb={15} title={item.full_name} />
+                                    <TextTypo title={item.user_chats[_id][item.user_chats[_id].length - 1].content} />
                                 </View>
                             </View>
                             <View>
@@ -72,8 +94,8 @@ export default function MatchScreen({navigation}: any) {
                             </View>
                     </TouchableOpacity>
                 )}
-
-            />
+                />
+                 {/* </View> */}
          </SafeAreaView>
         )
 }
@@ -86,14 +108,14 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#E9E8E8',
         paddingVertical: 14,
-        alignItems: 'center',
+      //  alignItems: 'center',
         justifyContent: 'space-between'
     },
     imageContainer: {
         width: 60,
         height: 60,
         borderRadius: 50,
-        marginHorizontal: 10,
+        marginRight: 10,
         marginVertical: 20,
         borderWidth: 4,
         borderColor: '#5f1489'

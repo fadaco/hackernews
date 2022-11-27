@@ -1,8 +1,10 @@
+import { useEffect } from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
 import SettingList from '../../components/settingList';
-import {Text } from 'react-native-paper';
-import { useSelector } from 'react-redux'
+import { URL } from '../../config';
+import { useSelector, useDispatch } from 'react-redux'
+import { getUser } from '../../store/actions/onboarding.actions';
 import TextTypo from '../../components/textTypo';
 
 const settings = [
@@ -25,14 +27,18 @@ const settings = [
 
 
 export default function ProfileScreen({navigation}: any) {
-  const { user } = useSelector((state: any) => state.user);
+  const { full_name, age,images} = useSelector((state: any) => state.onboarding);
+  const dispatch:any = useDispatch();
+
     return (
           <SafeAreaView style={styles.container}>
         <View>
           <View style={styles.imageContainer}>
-            <Image source={require('../../assets/icons/profile.png')} />
+            <Image  style={{width: '100%', height: '100%'}} source={{
+              uri: URL + '' + images[0]?.image
+            }} />
           </View>
-          <TextTypo title="Veronica, 32" size={24} fw="bold" mt={10} ta="center" />
+          <TextTypo title={full_name + ', ' + age} size={24} fw="bold" mt={10} ta="center" />
           <View style={styles.profile}>
           {settings.map((setting, index) => (
             <SettingList onPress={() => navigation.navigate(setting.url, {
@@ -61,7 +67,9 @@ const styles = StyleSheet.create({
       width: 144,
       height: 144,
       alignSelf: 'center',
-      marginTop: 20
+      marginTop: 20,
+      borderRadius: 100,
+      overflow: 'hidden'
     },
   
   profile: {

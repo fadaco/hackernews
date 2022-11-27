@@ -1,113 +1,168 @@
 import { useState, useEffect, useRef } from 'react';
-import SafeAreaView from 'react-native-safe-area-view';
-import { View, Text, StyleSheet, ScrollView, ImageBackground, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux'
-import { Avatar } from 'react-native-paper';
+import SafeAreaView from 'react-native-safe-area-view';
+import { Avatar, Chip, Button } from 'react-native-paper';
+import { User } from '../store/type'
+import { URL, EMPTY_URL } from '../config';
+import { getUserList } from '../store/actions/match.actions';
 import Swiper from 'react-native-deck-swiper';
 import TextTypo from '../components/textTypo';
-
-
-const db = [
-  {
-    name: 'Richard Hendricks',
-    img: require('../assets/icons/testImage.png'),
-    location: 'Ikoyi, Lagos 13 Miles from you',
-    about: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud ',
-  },
-  {
-    name: 'Erlich Bachman',
-    img: require('../assets/icons/profile.png'),
-    location: 'Ikoyi, Lagos 13 Miles from you',
-    about: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud ',
-
-  },
-  {
-    name: 'Monica Hall',
-    img: require('../assets/icons/testImage.png'),
-    location: 'Ikoyi, Lagos 13 Miles from you',
-    about: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud ',
-  },
-  {
-    name: 'Jared Dunn',
-    img: require('../assets/icons/profile.png'),
-    location: 'Ikoyi, Lagos 13 Miles from you',
-    about: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud ',
-  },
-  {
-    name: 'Dinesh Chugtai',
-    img: require('../assets/icons/testImage.png'),
-    location: 'Ikoyi, Lagos 13 Miles from you',
-    about: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud ',
-
-  }
-]
-
+import * as Location from 'expo-location';
+import socket from '../shared/socket';
 
 export default function Dashboard() {
-  const { stories_ids, top_story, skip, limit } = useSelector((state: any) => state.topstory);
+  const { userList } = useSelector((state: any) => state.match);
+  const { _id, socket_id, images } = useSelector((state: any) => state.onboarding);
+  const [matchFound, setMatchFound] = useState<boolean>(false);
+
   const dispatch: any = useDispatch()
-  let swipe:any = '';
-  const characters = db
+  const [userLocation, setUserLocation] = useState<any>(null)
+  let swipe: any = '';
+  
+  const [location, setLocation] = useState<any>(null);
+  const [errorMsg, setErrorMsg] = useState<any>(null);
+
+  useEffect(() => {
+    (async () => {
+      
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+    })();
+    socket.on('matchFound', (data) => {
+      if (data === 'user match') {
+        setMatchFound(true)
+      }
+    })
+  }, []);
+
+
+  let text = 'Waiting..';
+  if (errorMsg) {
+    text = errorMsg;
+  } else if (location) {
+    text = JSON.stringify(location);
+  }
+    
+  useEffect(() => {
+    try {
+      setUserLocation(JSON.parse(text))
+    } catch (e) {
+      console.log(e)
+       }
+  
+  }, [text])
+
+ 
+
+  useEffect(() => {
+    const latitude = userLocation?.coords?.latitude
+    const longitude = userLocation?.coords?.longitude
+    if (latitude && longitude) {
+       dispatch(getUserList({
+     latitude: latitude.toString(),
+     longitude: longitude.toString()
+   }))
+    }
+  }, [userLocation])
 
   return (
    
     <View style={styles.container}>
-      <ScrollView>
-        <View style={{ position: 'relative', height: 1320}}>
+      {matchFound ?
+        <SafeAreaView style={styles.swipeMatchContainer}>
+            <View style={styles.imageSwipeContainer}>
+              <Image style={[styles.imageSwipe, {left: -50}]} source={{uri: URL + '' + images[0].image}} />
+              <Image style={styles.matchIcon} source={require('../assets/icons/match-icon.png')} />
+              <Image style={styles.matchIcons} source={require('../assets/icons/match-icons.png')}/>
+              <Image style={[styles.imageSwipe, {left: 10}]} source={require('../assets/icons/profile.png') } />
+            </View>
+         
+          <TextTypo fw="bold" mt={80} color="#ffffff" size={18} title="Matched!" />
+            <View style={{width: 177, margin: 'auto'}}>
+            <TextTypo mt={70} mb={40} ta="center" color="#ffffff" title="You can now send a message to this person" />
+            <Button mode="elevated">Send Message</Button>
+            <Button onPress={() => setMatchFound(false)} style={{marginTop: 30}} labelStyle={{color: '#ffffff'}}>Close</Button>
+            </View>
+        </SafeAreaView> :
+        <ScrollView>
+        <View style={{ position: 'relative', height: 1320 }}>
           <Swiper
-        cards={characters}
-        renderCard={(card) => {
-            return (
-              <View style={[styles.card, { borderBottomLeftRadius: 16, borderBottomRightRadius: 16}]}>
-                <View style={{position: 'relative',}}>
-                    <Image style={{ width: '100%',height: '100%', borderTopLeftRadius: 16, borderTopRightRadius: 16}} source={card.img}/>
-                  <Text style={[styles.text, { position: 'absolute' }]}>{card.name}</Text>
-                  <View style={styles.swipeContainer}>
-                    <TouchableOpacity style={styles.swipeButton} onPress={()=> swipe.swipeLeft()}>
-                      <Image source={require('../assets/icons/notlike.png')} />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.swipeButton} onPress={()=> swipe.swipeRight()}>
-                    <Image source={require('../assets/icons/like.png')}/>
-                    </TouchableOpacity>
-                  </View>
+            cards={userList}
+            renderCard={(user: User) => {
+              return (
+                <View style={[styles.card, { borderBottomLeftRadius: 16, borderBottomRightRadius: 16 }]}>
+                  <View style={{ position: 'relative', }}>
+                    <Image style={{ width: '100%', height: '100%', borderTopLeftRadius: 16, borderTopRightRadius: 16 }} source={{
+                      uri: user?.images?.length ? user.images[0].image : EMPTY_URL
+                    }} />
+                    <Text style={[styles.text, { position: 'absolute' }]}>{user?.full_name}</Text>
+                    <View style={styles.swipeContainer}>
+                      <TouchableOpacity style={styles.swipeButton} onPress={() => swipe.swipeLeft()}>
+                        <Image source={require('../assets/icons/notlike.png')} />
+                      </TouchableOpacity>
+                      <TouchableOpacity style={styles.swipeButton} onPress={() => swipe.swipeRight()}>
+                        <Image source={require('../assets/icons/like.png')} />
+                      </TouchableOpacity>
+                    </View>
                   </View>
                
-                <View style={{backgroundColor: 'rgba(95, 20, 137, 0.1)', paddingHorizontal: 10, paddingBottom: 30, borderBottomLeftRadius: 16, borderBottomRightRadius: 16}}>
-                <View style={{ marginVertical: 40 }}>
-                  <TextTypo size={15} color="#3D3735" title="About me" />
-                  <TextTypo size={18} color="#3D3735" title={card.about} />
-                </View>
-                <View>
-                  <View style={{width: 200, height: 200}}>
-                  <Image style={{width: 200, height: 200}} source={card.img}/>
-
-                  </View>
-                  <View style={{ marginVertical: 40 }}>
-                    <TextTypo size={15} color="#3D3735" title="location" />
-                    <TextTypo size={24} color="#3D3735" title={card.location} />
-                  </View>
+                  <View style={{ backgroundColor: 'rgba(95, 20, 137, 0.1)', paddingHorizontal: 10, paddingBottom: 30, borderBottomLeftRadius: 16, borderBottomRightRadius: 16 }}>
+                    <View style={{ marginVertical: 40 }}>
+                      <TextTypo size={15} color="#3D3735" title="About me" />
+                      <TextTypo size={18} color="#3D3735" title={user?.about_me} />
+                    </View>
                   
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                      <TouchableOpacity onPress={()=> swipe.swipeLeft()}>
-                      <Avatar.Icon style={{backgroundColor: '#5f1489'}} size={70} icon="close" />
-                      </TouchableOpacity>   
-                      <TouchableOpacity onPress={()=> swipe.swipeRight()}>
-                      <Avatar.Icon style={{backgroundColor: '#5f1489'}} size={70} icon="cards-heart" />
-                      </TouchableOpacity>
-                  </View>
+                    <View>
 
-                </View>
+                    </View>
+                    <View>
+                      <View style={{ width: 200, height: 200 }}>
+                        <Image style={{ width: 200, height: 200 }} source={{
+                          uri: user?.images?.length ? user.images[0].image : EMPTY_URL
+                        }} />
+
+                      </View>
+                      <View style={{ marginVertical: 40 }}>
+                        <TextTypo size={15} color="#3D3735" title="location" />
+                        <TextTypo size={24} color="#3D3735" title={'card.location'} />
+                      </View>
+                  
+                      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <TouchableOpacity onPress={() => swipe.swipeLeft()}>
+                          <Avatar.Icon style={{ backgroundColor: '#5f1489' }} size={70} icon="close" />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => swipe.swipeRight()}>
+                          <Avatar.Icon style={{ backgroundColor: '#5f1489' }} size={70} icon="cards-heart" />
+                        </TouchableOpacity>
+                      </View>
+
+                    </View>
                   </View>
                 </View>
-            )
-        }}
-        onSwiped={(cardIndex) => {console.log(cardIndex)}}
-        onSwipedAll={() => { console.log('onSwipedAll') }}
-        cardStyle={{ height: 'auto' }}
-        cardHorizontalMargin={5}
-          cardIndex={0}
-        verticalSwipe={false}
-          backgroundColor={'transparent'}
+              )
+            }}
+            // onSwiped={(cardIndex) => {console.log(cardIndex)}}
+            //  onSwipedAll={() => { console.log('onSwipedAll') }}
+            onSwipedRight={(index) => {
+              socket.emit('swipe', {
+                senderId: _id,
+                receiverId: userList[index]._id,
+                type: 'like',
+                socket_id: socket_id,
+              })
+            }}
+            cardStyle={{ height: 'auto' }}
+            cardHorizontalMargin={5}
+            cardIndex={0}
+            verticalSwipe={false}
+            backgroundColor={'transparent'}
             stackSize={1}
             ref={(swiper) => {
               swipe = swiper
@@ -132,7 +187,7 @@ export default function Dashboard() {
                 }
               },
               right: {
-                title:  'LIKE',
+                title: 'LIKE',
                 style: {
                   label: {
                     backgroundColor: 'black',
@@ -151,11 +206,11 @@ export default function Dashboard() {
               },
             }}
             animateOverlayLabelsOpacity
-          animateCardOpacity
+            animateCardOpacity
           />
           
         </View>
-        </ScrollView>
+      </ScrollView>}
 </View>
     )
 }
@@ -203,6 +258,36 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'center',
     alignItems: 'center'
+  },
+  swipeMatchContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    textAlign: 'center',
+    alignItems: 'center',
+    backgroundColor: '#5f1489',
+  },
+  imageSwipeContainer: {
+    flexDirection: 'row',
+    position: 'relative'
+  },
+  imageSwipe: {
+    width: 72,
+    height: 72,
+    borderRadius: 50,
+    position: 'absolute',
+    borderWidth: 2,
+    borderColor: '#5f1489',
+    zIndex: 999
+  },
+  matchIcon: {
+    position: 'relative',
+    left: 3,   
+    top: -28
+  },
+  matchIcons: {
+    position: 'relative',
+    left: -20,   
+    bottom: -50,
   }
 
   });

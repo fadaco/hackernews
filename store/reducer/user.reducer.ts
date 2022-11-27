@@ -34,7 +34,6 @@ const UserReducer = (state = INIT_VALUES, action: ActionType) => {
                     db: action.payload
             }
         case SET_USER_VALUE:
-            console.log(action.payload)
             return {
                 ...state,
                 user: {

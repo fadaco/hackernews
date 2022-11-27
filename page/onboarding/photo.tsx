@@ -1,44 +1,60 @@
 import { useState, useEffect, useRef } from 'react';
 import SafeAreaView from 'react-native-safe-area-view';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, FlatList, Image, TouchableOpacity, Platform } from 'react-native';
+import { Button, Snackbar } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux'
-import { TextInput, Button } from 'react-native-paper';
-import { User } from '../../store/type'
-import ActionSheet, {ActionSheetRef} from "react-native-actions-sheet";
+import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
+import { uploadImage, setUpProfile } from '../../store/actions/onboarding.actions';
 import Footer from '../../components/footer';
+import { EMPTY_URL, URL } from '../../config';
 import TextTypo from '../../components/textTypo';
 import * as ImagePicker from 'expo-image-picker';
 
-
 export default function PhotoScreen({ route, navigation }: any) {
+  const { images: Img} = useSelector((state: any) => state.onboarding);
   const { profile } = route?.params;
+  const [loading, setLoading] = useState<boolean>(false);
   const actionSheetRef = useRef<ActionSheetRef>(null);
   const [count, setCount] = useState<number>(0);
-  const [userParam, setUserParam] = useState<User>({
-    full_name: '',
-    email: '',
-  })
-  
-  
-  const [images, setImages] = useState<string[]>([]);
-
+  const [message, setMessage] = useState<string>('')
+  const [images, setImages] = useState<any[]>([]);
+  const [payData, setPayData] = useState<any[]>([]);
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
     try {
-      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync()
-
-      let result: any = await ImagePicker.launchImageLibraryAsync();
-    
-      if (!result.cancelled) {
-        setImages(img => [...img, result.uri]);
+      let result: any = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [3, 3],
+        quality: 1,
+      });
+      if (!result.canceled && (result.assets[0]?.fileName?.toLowerCase().includes('jpg') || result.assets[0].fileName?.toLowerCase()?.includes('png') || result.assets[0]?.fileName?.toLowerCase().includes('jpeg'))) {
+        setImages(img => [...img, {
+          image: result.assets[0].uri,
+          default: false
+        }]);
+        const res = await uploadImage(result.assets[0].uri)
+        if (res.status) {
+          setPayData(img => [...img, {
+            image: res.data,
+            default: false,
+            _id: ''
+          }])
+        }
+      } else {
+        setMessage('Unsupported file type')
       }
     } catch (error) {
-      console.log(error)
-      
+      console.log(error)    
     }
-   
   };
+
+  useEffect(() => {
+    // if (profile) {
+    //   console.log(Img)
+    //   setImages(Img);
+    // }
+  }, [])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -53,7 +69,7 @@ export default function PhotoScreen({ route, navigation }: any) {
        keyExtractor={(item, index) => index.toString()}
         renderItem={({ item, index }) => (
             <View style={styles.pickerContainer}>
-            <Image source={{ uri: item }} style={{ width: 100, height: 100, borderRadius: 8, margin: 3 }} />
+            <Image source={{ uri: (item._id ? URL : EMPTY_URL) + item.image }} style={{ width: 100, height: 100, borderRadius: 8, margin: 3 }} />
             <TouchableOpacity style={styles.picker} onPress={() => {
               setCount(index)
               actionSheetRef.current?.show();
@@ -62,7 +78,7 @@ export default function PhotoScreen({ route, navigation }: any) {
             </TouchableOpacity>
             </View>
         )} /> : <></>}
-      
+            <Snackbar style={styles.snackbar} visible={message !== ''} onDismiss={() => setMessage('')}>{message}</Snackbar>
         <ActionSheet ref={actionSheetRef}>
               <View style={styles.actionsheet}>
           <TextTypo fw="bold" size={25} mb={10} title="Delete this picture?"/>
@@ -75,10 +91,21 @@ export default function PhotoScreen({ route, navigation }: any) {
           <Button  onPress={() => actionSheetRef.current?.hide()} style={{ marginTop: 6,}} labelStyle={{fontFamily: 'Averta'}}>No, Cancel</Button>
             </View>   
         </ActionSheet>
-  
-     
          
-      <Footer title={profile ? "Update" : "Next"} submitData={() => navigation.navigate(profile ? 'profile' : 'complete')}/>
+      <Footer loading={loading} title={profile ? "Update" : "Next"} submitData={async() => {
+        setLoading(true)
+        const response: any = await setUpProfile({
+          type: 'images',
+          name: payData
+        })
+        if (response.status) {
+          navigation.navigate(profile ? 'profile' : 'complete')
+        } else {
+         setMessage(response.message)
+          }
+       
+        setLoading(false)
+      }} />
     </SafeAreaView>
   )
 }
@@ -103,5 +130,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: -5,
     bottom: -10
+  },
+  snackbar: {
+    marginTop: 100
   }
   });

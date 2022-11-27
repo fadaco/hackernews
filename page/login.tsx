@@ -1,13 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import SafeAreaView from 'react-native-safe-area-view';
 import TextTypo from '../components/textTypo';
 import { View, StyleSheet } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux'
-import { loggedInWithEmailAndPhoneNumber, clearUserObject } from '../store/actions/onboarding.actions';
+import { useDispatch } from 'react-redux'
+import { loggedInWithEmailAndPhoneNumber, dispatchUserDetailToStore } from '../store/actions/onboarding.actions';
 import { TextInput, Snackbar } from 'react-native-paper';
 import { User } from '../store/type'
-import bcrypt from 'react-native-bcrypt'
-import Logo from '../components/logo';
 import Footer from '../components/footer';
 import PhoneInput from "react-native-phone-number-input";
 
@@ -15,28 +13,18 @@ export default function Login({navigation}: any) {
   const [userParam, setUserParam] = useState<User>({
     email: '',
     phone_number: ''
-   })
-  const { user, message, status } = useSelector((state: any) => state.onboarding);
-  const [responseMessage, setResponseMessage] = useState<string>('')
-  const [loading, setLoading] = useState<boolean>(false)
+  });
+  const [message, setMessage] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
   const dispatch: any = useDispatch();
 
-  useEffect(() => {
-    if (status) {
-        navigation.navigate('otp')
-      } else if (!status && message !== '') {
-      setResponseMessage(message)
-    }
-  }, [status])
-
-
-    const handleUserInput = (text: string, type: string) => {
-      setResponseMessage('');
-        setUserParam({
-        ...userParam,
-        [type]: text
-        })
-  }
+  const handleUserInput = (text: string, type: string) => {
+    setMessage('');
+    setUserParam({
+      ...userParam,
+      [type]: text
+    })
+  };
  
   return (
     <SafeAreaView style={styles.container}>
@@ -45,33 +33,30 @@ export default function Login({navigation}: any) {
         <TextInput
           label="Email"
           mode='outlined'
+          value={userParam.email?.toLowerCase()}
           onChangeText={text => handleUserInput(text, 'email')} />
-        
         <PhoneInput
           defaultCode="NG"
           layout="first"
-       //  onChangeText={(text) => console.log(text)}
           onChangeFormattedText={(text) => handleUserInput(text, 'phone_number')}
           autoFocus
-          containerStyle={styles.phone}
-        />
+          containerStyle={styles.phone} />
       </View>
-      <Snackbar visible={responseMessage !== ''} onDismiss={() => setResponseMessage('')}>{ responseMessage}</Snackbar>
-      <Footer  title="Next" loading={loading} submitData={() => {
-        navigation.navigate('otp')
-        //disabled={userParam.email == '' || userParam.phone_number}
-        //   dispatch(clearUserObject())
-        //   setResponseMessage("");
-        //   setLoading(true);
-        //   dispatch(loggedInWithEmailAndPhoneNumber(userParam));
-        //  setLoading(false);
-        // dispatch(clearUserObject())
-
-      }
-      } />
+      <Snackbar style={styles.snackbar} visible={message !== ''} onDismiss={() => setMessage('')}>{message}</Snackbar>
+      <Footer  title="Next" loading={loading} submitData={async () => {
+        setLoading(true)
+        const response = await loggedInWithEmailAndPhoneNumber(userParam);
+        if (response.status) {
+          dispatch(dispatchUserDetailToStore(response.data))
+          navigation.navigate('otp')
+        } else {
+          setMessage(response.message);
+        }
+        setLoading(false)
+      }} />
       </SafeAreaView>
     )
-}
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -87,4 +72,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     backgroundColor: '#ffffff'
   },
+  snackbar: {
+    marginTop: 100
+  }
   });

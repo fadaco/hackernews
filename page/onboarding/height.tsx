@@ -1,41 +1,25 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import SafeAreaView from 'react-native-safe-area-view';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux'
-import { getCategory } from '../../store/actions/onboarding.actions';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { useDispatch } from 'react-redux'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Button } from 'react-native-paper';
-import { goToDashboard } from '../../store/actions/onboarding.actions';
-import {User} from '../../store/type'
+import { goToDashboard, setUpProfile } from '../../store/actions/onboarding.actions';
+import { Snackbar } from 'react-native-paper';
 import Footer from '../../components/footer';
 import ActionSheet, {ActionSheetRef} from "react-native-actions-sheet";
 import { Picker } from '@react-native-picker/picker';
 import TextTypo from '../../components/textTypo';
+import { HEIGHTS } from '../../data';
 
 
 export default function HeightScreen({ navigation }: any) {
-  const [categories, setCategories] = useState<string[]>([])
+  const [categories, setCategories] = useState<string[]>(HEIGHTS)
+  const [loading, setLoading] = useState<boolean>(false)
   const [selectedLanguage, setSelectedLanguage] = useState();
     const actionSheetRef = useRef<ActionSheetRef>(null);
-  const [userParam, setUserParam] = useState<User>({
-    full_name: '',
-    email: '',
-  })
   const dispatch: any = useDispatch();
-
-
    const [message, setMessage] = useState<string>('')
-
-   useEffect(() => {
-    getCategory('heights').then((res) => setCategories(res.data))
-  }, [])
-
-  const handleUserInput = (text: string, type: string) => {
-    setMessage('');
-    setUserParam({
-      ...userParam,
-      [type]: text
-    })
-  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -44,7 +28,8 @@ export default function HeightScreen({ navigation }: any) {
           <TouchableOpacity style={styles.showHeight} onPress={() => actionSheetRef.current?.show()}>
               <TextTypo color="#251E1C" title={selectedLanguage || 'Choose your height'}/>
           </TouchableOpacity>
-      
+          <Snackbar style={styles.snackbar} visible={message !== ''} onDismiss={() => setMessage('')}>{message}</Snackbar>
+
           <ActionSheet ref={actionSheetRef}>
               <View style={styles.actionsheet}>
           <TextTypo fw="bold" size={25} mb={7} title="Your height" />
@@ -65,9 +50,22 @@ export default function HeightScreen({ navigation }: any) {
 
             </View>   
         </ActionSheet>
-  
-      <Footer title="Next" submitData={() => {
+      <Footer loading={loading} title="Next" submitData={async () => {
+        setLoading(true)
+        const response = await setUpProfile({
+          type: 'height',
+          name: selectedLanguage
+        })
+        if (response.status) {
+          await AsyncStorage.setItem(
+            'isComplete',
+            'true'
+          );
           dispatch(goToDashboard(true))
+        } else {
+          setMessage(response.message)
+        }
+        setLoading(true)
       }}/>
     </SafeAreaView>
   )
@@ -93,5 +91,8 @@ const styles = StyleSheet.create({
     marginTop: 25,
     justifyContent: 'center',
     paddingLeft: 20
+  },
+  snackbar: {
+    marginTop: 100
   }
   });

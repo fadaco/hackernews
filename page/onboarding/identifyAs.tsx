@@ -1,34 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import SafeAreaView from 'react-native-safe-area-view';
 import { View, StyleSheet } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux'
-import { getCategory } from '../../store/actions/onboarding.actions';
-import { RadioButton, } from 'react-native-paper';
+import { setUpProfile } from '../../store/actions/onboarding.actions';
+import { RadioButton, Snackbar } from 'react-native-paper';
 import TextTypo from '../../components/textTypo';
-import {User} from '../../store/type'
 import Footer from '../../components/footer';
+import { IDENTIFY } from '../../data';
 
 export default function IdentifyAsScreen({ navigation }: any) {
-  const [categories, setCategories] = useState<string[]>([])
+  const [loading, setLoading] = useState<boolean>(false);
+  const [categories, setCategories] = useState<string[]>(IDENTIFY)
   const [value, setValue] = useState<string>('')
-  const [userParam, setUserParam] = useState<User>({
-    full_name: '',
-    email: '',
-  })
-   
-  useEffect(() => {
-    getCategory('identify').then((res) => setCategories(res.data))
-  }, [])
-
    const [message, setMessage] = useState<string>('')
-
-  const handleUserInput = (text: string, type: string) => {
-    setMessage('');
-    setUserParam({
-      ...userParam,
-      [type]: text
-    })
-  }
 
 
   return (
@@ -43,9 +26,20 @@ export default function IdentifyAsScreen({ navigation }: any) {
           </View>
         ))}
       </RadioButton.Group> : <></>}
-         
-     
-      <Footer title="Next" submitData={() => navigation.navigate('race')}/>
+      <Snackbar style={styles.snackbar} visible={message !== ''} onDismiss={() => setMessage('')}>{message}</Snackbar>
+      <Footer loading={loading} title="Next" submitData={async () => {
+         setLoading(true)
+         const response = await setUpProfile({
+           type: 'identify_as',
+           name: value
+         })
+         if (response.status) {
+           navigation.navigate('race')
+         } else {
+           setMessage(response.message)
+           }
+           setLoading(false)
+      }} />
     </SafeAreaView>
   )
 }
@@ -65,5 +59,8 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     height: 70,
     justifyContent: 'center'
+  },
+  snackbar: {
+    marginTop: 100
   }
   });

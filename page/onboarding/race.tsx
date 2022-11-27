@@ -1,38 +1,18 @@
 import { useState, useEffect } from 'react';
 import SafeAreaView from 'react-native-safe-area-view';
-import { View, Text, StyleSheet } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux'
-import { getCategory } from '../../store/actions/onboarding.actions';
-import { RadioButton, Button, Snackbar } from 'react-native-paper';
-import {User} from '../../store/type'
-import bcrypt from 'react-native-bcrypt'
+import { View, StyleSheet } from 'react-native';
+import { setUpProfile } from '../../store/actions/onboarding.actions';
+import { RadioButton, Snackbar } from 'react-native-paper';
 import Footer from '../../components/footer';
 import TextTypo from '../../components/textTypo';
+import { RACE } from '../../data';
+
 
 export default function RaceScreen({ navigation }: any) {
-  const [categories, setCategories] = useState<string[]>([])
+  const [loading, setLoading] = useState<boolean>(false);
+  const [categories, setCategories] = useState<string[]>(RACE)
   const [value, setValue] = useState<string>('')
-
-  const [userParam, setUserParam] = useState<User>({
-    full_name: '',
-    email: '',
-  })
-
-  useEffect(() => {
-    getCategory('description').then((res) => setCategories(res.data))
-  }, [])
-
-
    const [message, setMessage] = useState<string>('')
-
-
-  const handleUserInput = (text: string, type: string) => {
-    setMessage('');
-    setUserParam({
-      ...userParam,
-      [type]: text
-    })
-  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -48,9 +28,20 @@ export default function RaceScreen({ navigation }: any) {
           </View>
         ))}
       </RadioButton.Group> : <></>}
-         
-      
-      <Footer title="Next" submitData={() => navigation.navigate('intention')}/>
+      <Snackbar style={styles.snackbar} visible={message !== ''} onDismiss={() => setMessage('')}>{message}</Snackbar>
+      <Footer loading={loading} title="Next" submitData={async () => {
+         setLoading(true)
+         const response = await setUpProfile({
+           type: 'describe_yourself',
+           name: value
+         })
+         if (response.status) {
+          navigation.navigate('intention')
+         } else {
+           setMessage(response.message)
+           }
+           setLoading(false)
+      }} />
     </SafeAreaView>
   )
 }
@@ -70,5 +61,8 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     height: 70,
     justifyContent: 'center'
+  },
+  snackbar: {
+    marginTop: 100
   }
   });

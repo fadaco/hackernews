@@ -1,23 +1,33 @@
-import {UserData, OPT_USER, ActionType, AUTH_USER, CLEAR_USER_DATA, CATEGORY_TYPE} from '../type';
+import {User, OPT_USER, ActionType, CLEAR_USER_DATA, CATEGORY_TYPE, USER_DETAIL} from '../type';
 
-const INIT_VALUES: UserData = {
-    data: {
-        email: '',
-        full_name: '',
-        _id: '',
-    },
-    message: '',
-    status: null
+const INIT_VALUES: User = {
+    _id: '',
+    email: '',
+    full_name: '',
+    phone_number: '',
+    interests: [],
+    sports: [],
+    percentage_completed: 0,
+    age: 0,
+    date_of_birth: '',
+    describe_yourself: '',
+    drinking: '',
+    education: '',
+    height: '',
+    identify_as: '',
+    images: [],
+    intention: '',
+    interested: '',
+    smoking: '',
+    workout: ''
 }
 
 const OnBoardingReducer = (state = INIT_VALUES, action: ActionType) => {
     switch(action.type) {
-        case AUTH_USER:
+        case USER_DETAIL:
             return {
                 ...state,
-                user: { ...state.data, ...action.payload.data },
-                message: action.payload.message,
-                status: action.payload.status
+                ...action.payload
             }
         case OPT_USER: 
             return {

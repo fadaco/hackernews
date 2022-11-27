@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { View, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
-import {Text, Button, RadioButton } from 'react-native-paper';
+import { setUpProfile } from '../../store/actions/onboarding.actions';
+import {Text, Button, RadioButton, Snackbar } from 'react-native-paper';
 
 export default function UpdateProfileScreen({ route }: any) {
-    const [value, setValue] = useState<string>('')
+    const [loading, setLoading] = useState<boolean>(false);
+    const [values, setValues] = useState<any[]>([])
     const [steps, setSteps] = useState<number>(0)
     const { step } = route.params;
     useEffect(() => {
@@ -15,34 +17,52 @@ export default function UpdateProfileScreen({ route }: any) {
         {
             title: 'Do you work out?',
             icon: require('../../assets/icons/workout.png'),
-            data: ['Regularly', 'Occasionally', 'Never']
+            data: ['Regularly', 'Occasionally', 'Never'],
+            name: 'workout'
         },
         {
             title: 'Do you drink?',
              icon: require('../../assets/icons/drinking.png'),
-              data: ['Socially', 'Frequently', 'Never']
+            data: ['Socially', 'Frequently', 'Never'],
+              name: 'drinking'
         },
         {
             title: 'Do you smoke?',
             icon: require('../../assets/icons/smoking.png'),
-            data: ['Socially', 'Frequently', 'Never']
+            data: ['Socially', 'Frequently', 'Never'],
+            name: 'smoking'
         },
         {
             title: 'Educational level?',
             icon: require('../../assets/icons/education.png'),
-            data: ['High School', 'Undergraduate Student', 'Technical School', 'Undegraduate Degree', 'Postgraduate Student', 'Postgraduate Degree']
+            data: ['High School', 'Undergraduate Student', 'Technical School', 'Undegraduate Degree', 'Postgraduate Student', 'Postgraduate Degree'],
+            name: 'education'
         },
         {
             title: 'What are you looking for?',
             icon: require('../../assets/icons/search.png'),
-            data: ['Serious relationships', 'Something casual', 'Not sure']
+            data: ['Serious relationships', 'Something casual', 'Not sure'],
+            name: 'searching_for'
         },
         {
             title: 'Do have a religion',
             icon: require('../../assets/icons/religion.png'),
-            data: ['Agnostic', 'Atheist', 'Buddhist', 'Christian', 'Hindu', 'Jewish', 'Muslim', 'Other']
+            data: ['Agnostic', 'Atheist', 'Buddhist', 'Christian', 'Hindu', 'Jewish', 'Muslim', 'Other'],
+            name: 'religion'
         }
     ]
+
+    const handleSelectValue = (value: string, index: number) => {
+        let tmp = [...values]
+        const arrayIndex = tmp.findIndex((vt) => vt.type === myd[index].name);
+        if (arrayIndex >= 0) {
+            tmp[arrayIndex].name = value;
+            setValues(tmp)
+        } else {
+            console.log('new')
+            setValues(val => [...val, { type: myd[index].name, name: value }])
+        }
+    }
     
     const length = 6;
     return (
@@ -60,7 +80,7 @@ export default function UpdateProfileScreen({ route }: any) {
                 </View>
                 
       
-      {myd[steps].data.length ? <RadioButton.Group onValueChange={(value)=> setValue(value)} value={value}>
+      {myd[steps].data.length ? <RadioButton.Group onValueChange={(value)=> handleSelectValue(value, steps)} value={values.length > 0 ? values.find(vt => vt.type === myd[steps]?.name)?.name : ''}>
       {myd[steps].data.map((category: string, index: number) => (
           <View style={styles.selectContainer} key={index}>
               <RadioButton.Item label={category} labelStyle={{
@@ -70,11 +90,22 @@ export default function UpdateProfileScreen({ route }: any) {
         ))}
                     </RadioButton.Group> : <></>}
                    
-                        <Button disabled={steps === 5} onPress={() => setSteps(steps + 1)}>{steps === 5 ? 'Finish' : 'Skip'}</Button>
+                    <Button disabled={steps === 5} onPress={ () => setSteps(steps + 1)}>{steps === 5 ? 'Finish' : 'Continue'}</Button>
                 </View>
             </ScrollView>
             <View style={{padding: 20}}>
-                <Button style={{ borderRadius: 8, marginBottom: 5 }} mode='outlined'>Exit</Button>
+                <Button loading={loading} onPress={async () => {
+                    setLoading(true)
+                    let index = 0;
+                    while (index < values.length) {
+                        await setUpProfile(values[index]);
+                        index++
+                    }
+                    if (index >= values.length) {
+                        console.log('success')
+                    }
+                    setLoading(false)
+                }} style={{ borderRadius: 8, marginBottom: 5 }} mode='outlined'>Update</Button>
                 </View>
         </SafeAreaView>
     )
@@ -111,5 +142,8 @@ const styles = StyleSheet.create({
         marginVertical: 5,
         height: 70,
         justifyContent: 'center'
+    },
+    snackbar: {
+        marginTop: 100
       }
 })

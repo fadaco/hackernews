@@ -1,42 +1,35 @@
 import { useState, useEffect } from 'react';
 import SafeAreaView from 'react-native-safe-area-view';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
-import { getCategory } from '../store/actions/onboarding.actions';
-import { useSelector, useDispatch } from 'react-redux'
-import { RadioButton, Checkbox, Snackbar } from 'react-native-paper';
-import {User} from '../store/type'
+import { View, StyleSheet, FlatList } from 'react-native';
+import {dispatchUserDetailToStore} from '../store/actions/onboarding.actions'
+import { useDispatch } from 'react-redux'
+import {  Checkbox, Snackbar } from 'react-native-paper';
 import TextTypo from './textTypo';
+import { SPORTS } from '../data';
+
 
 export default function InterestFieldScreen({ navigation }: any) {
-  const [categories, setCategories] = useState<string[]>([])
+  const [categories, setCategories] = useState<string[]>(SPORTS)
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [value, setValue] = useState<string>('')
-  const [userParam, setUserParam] = useState<User>({
-    full_name: '',
-    email: '',
-  })
-  
-  useEffect(() => {
-    getCategory('sports').then((res) => setCategories(res.data))
-  }, [])
-
+  const dispatch: any = useDispatch();
    const [message, setMessage] = useState<string>('')
 
-   const handleCheckedItem = (item: string) => {
+   useEffect(() => {
+    dispatch(dispatchUserDetailToStore({sports: selectedCategories}))
+  }, [selectedCategories.length])
+  
+  const handleCheckedItem = (item: string) => {
     if (selectedCategories.includes(item)) {
       setSelectedCategories(selectedCategories.filter(sl => sl !== item))
     } else {
-      setSelectedCategories((items) => [...items, item])
+      if (selectedCategories.length < 5) {
+       setSelectedCategories((items) => [...items, item])
+      } else {
+        setMessage('You can only select 5 interests')
+      }
     }
   }
 
-  const handleUserInput = (text: string, type: string) => {
-    setMessage('');
-    setUserParam({
-      ...userParam,
-      [type]: text
-    })
-  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -48,10 +41,10 @@ export default function InterestFieldScreen({ navigation }: any) {
           <View key={index} style={styles.selectContainer}>
           <TextTypo title={item}/>
           <Checkbox  status={selectedCategories.includes(item) ? 'checked' : 'unchecked'} onPress={() => handleCheckedItem(item)} />
-                    </View>
+          </View>
       )}
       />
-     
+       <Snackbar style={styles.snackbar} visible={message !== ''} onDismiss={() => setMessage('')}>{message}</Snackbar>    
     </SafeAreaView>
   )
 }
@@ -72,5 +65,8 @@ const styles = StyleSheet.create({
     margin: 10,
     width: 97,
     height: 97
+  },
+  snackbar: {
+    marginTop: 100
   }
   });

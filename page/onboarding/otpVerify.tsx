@@ -1,12 +1,32 @@
 import { useEffect } from 'react';
 import { View, StyleSheet, Image } from 'react-native';
-import { TextInput, Text, Snackbar, ActivityIndicator } from 'react-native-paper';
+import { useDispatch } from 'react-redux'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ActivityIndicator } from 'react-native-paper';
+import { getPageName } from '../../shared/methods';
+import { goToDashboard } from '../../store/actions/onboarding.actions';
 import TextTypo from '../../components/textTypo';
 
-export default function OtpVerifyScreen({ navigation }: any) {
+export default function OtpVerifyScreen({ route, navigation }: any) {
+    const { page } = route.params;
+    const dispatch: any = useDispatch();
     useEffect(() => {
         setTimeout(() => {
-            navigation.navigate('name')
+            if (page === 'dashboard') {
+                 AsyncStorage.setItem(
+                    'isComplete',
+                    'true'
+                  );
+                dispatch(goToDashboard(true))
+                navigation.navigate('dashboard')
+            }
+            if (page === 'set_up_image') {
+                navigation.navigate('photo', {
+                    profile: false
+                })
+            } else {
+                navigation.navigate(getPageName(page))
+            }
         }, 1000)
     }, [])
   
