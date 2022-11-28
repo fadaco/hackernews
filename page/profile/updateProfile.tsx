@@ -1,16 +1,22 @@
 import { useState, useEffect } from 'react';
 import { View, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
+import { useSelector } from 'react-redux';
 import { setUpProfile } from '../../store/actions/onboarding.actions';
 import {Text, Button, RadioButton, Snackbar } from 'react-native-paper';
 
 export default function UpdateProfileScreen({ route }: any) {
+    const { percentage_completed, interests, identify_as, height, workout, drinking, smoking, education, searching_for, religion, about_me } = useSelector((state: any) => state.onboarding);
     const [loading, setLoading] = useState<boolean>(false);
     const [values, setValues] = useState<any[]>([])
     const [steps, setSteps] = useState<number>(0)
     const { step } = route.params;
     useEffect(() => {
         setSteps(step)
+        setValues([{ type: 'workout', name: workout || '' }, { type: 'smoking', name: smoking || '' },
+            { type: 'drinking', name: drinking || '' }, { type: 'education', name: education || '' },
+            { type: 'searching_for', name: searching_for || '' },  { type: 'religion', name: religion || '' }
+        ])
     }, [])
 
     const myd = [
@@ -54,6 +60,7 @@ export default function UpdateProfileScreen({ route }: any) {
 
     const handleSelectValue = (value: string, index: number) => {
         let tmp = [...values]
+        console.log(tmp)
         const arrayIndex = tmp.findIndex((vt) => vt.type === myd[index].name);
         if (arrayIndex >= 0) {
             tmp[arrayIndex].name = value;

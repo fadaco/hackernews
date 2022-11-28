@@ -15,8 +15,6 @@ export default function Chatcreen({ route }:any) {
     const { user_chat, user_message } = useSelector((state: any) => state.match);
     let tmpChat:any = []
      useEffect(() => {
-         console.log(user_message)
-         console.log(chats)
          chats.forEach((dt:any) => {
              tmpChat.push({
                  _id: Math.floor(Math.random() * 10000),
@@ -27,7 +25,7 @@ export default function Chatcreen({ route }:any) {
                  }
              })
          })
-         setMessages((previousMessages:any) => GiftedChat.append(previousMessages, tmpChat))
+         setMessages((previousMessages:any) => GiftedChat.append(previousMessages, tmpChat.reverse()))
 
         // console.log(user_chat._id)
     setMessages((previousMessages:any) => GiftedChat.append(previousMessages, user_message.filter((dt:any) => user_chat._id === dt.user._id)))
@@ -86,6 +84,7 @@ export default function Chatcreen({ route }:any) {
                 infiniteScroll
                 placeholder="Write something..."
                 alignTop
+                inverted
                 renderActions={renderActions}
                 renderAvatar={() => null}
                 messages={messages}

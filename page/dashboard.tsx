@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux'
+import { getUserList } from '../store/actions/match.actions';
 import SafeAreaView from 'react-native-safe-area-view';
 import { Avatar, Chip, Button } from 'react-native-paper';
 import { User } from '../store/type'
 import { URL, EMPTY_URL } from '../config';
-import { getUserList } from '../store/actions/match.actions';
 import Swiper from 'react-native-deck-swiper';
 import TextTypo from '../components/textTypo';
 import * as Location from 'expo-location';
@@ -22,6 +22,8 @@ export default function Dashboard() {
   
   const [location, setLocation] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState<any>(null);
+
+  
 
   useEffect(() => {
     (async () => {
@@ -62,18 +64,20 @@ export default function Dashboard() {
  
 
   useEffect(() => {
-    const latitude = userLocation?.coords?.latitude
-    const longitude = userLocation?.coords?.longitude
-    if (latitude && longitude) {
-       dispatch(getUserList({
-     latitude: latitude.toString(),
-     longitude: longitude.toString()
+   const latitude = userLocation?.coords?.latitude
+   const longitude = userLocation?.coords?.longitude
+
+   // if (latitude && longitude) {
+  dispatch(getUserList({
+     latitude: '37.785834',
+     longitude: '-122.406417'
    }))
-    }
-  }, [userLocation])
+  //  }
+  }, [])
 
   return (
-   
+ 
+ 
     <View style={styles.container}>
       {matchFound ?
         <SafeAreaView style={styles.swipeMatchContainer}>
@@ -100,7 +104,7 @@ export default function Dashboard() {
                 <View style={[styles.card, { borderBottomLeftRadius: 16, borderBottomRightRadius: 16 }]}>
                   <View style={{ position: 'relative', }}>
                     <Image style={{ width: '100%', height: '100%', borderTopLeftRadius: 16, borderTopRightRadius: 16 }} source={{
-                      uri: user?.images?.length ? user.images[0].image : EMPTY_URL
+                      uri: user?.images?.length ? URL + '' + user.images[0].image : EMPTY_URL
                     }} />
                     <Text style={[styles.text, { position: 'absolute' }]}>{user?.full_name}</Text>
                     <View style={styles.swipeContainer}>
@@ -125,7 +129,7 @@ export default function Dashboard() {
                     <View>
                       <View style={{ width: 200, height: 200 }}>
                         <Image style={{ width: 200, height: 200 }} source={{
-                          uri: user?.images?.length ? user.images[0].image : EMPTY_URL
+                          uri: user?.images?.length ? URL + '' + user.images[0].image : EMPTY_URL
                         }} />
 
                       </View>
@@ -211,7 +215,7 @@ export default function Dashboard() {
           
         </View>
       </ScrollView>}
-</View>
+    </View>
     )
 }
 

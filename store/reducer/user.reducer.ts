@@ -1,6 +1,6 @@
-import {UserData, CREATE_USER, ActionType, AUTH_USER, SET_USER_VALUE, SET_LOGIN_IN, SET_USER_TABLE} from '../type';
+import { CREATE_USER, ActionType, AUTH_USER, SET_USER_VALUE, SET_LOGIN_IN, SET_USER_TABLE} from '../type';
 
-const INIT_VALUES: UserData = {
+const INIT_VALUES = {
     data: {
         email: '',
         full_name: ''

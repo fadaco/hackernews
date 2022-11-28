@@ -19,7 +19,9 @@ const INIT_VALUES: User = {
     intention: '',
     interested: '',
     smoking: '',
-    workout: ''
+    workout: '',
+    about_me: '',
+    subscription: ''
 }
 
 const OnBoardingReducer = (state = INIT_VALUES, action: ActionType) => {

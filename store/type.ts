@@ -21,6 +21,7 @@ export type User = {
     workout?: string
     about_me?: string
     socket_id?: string
+    subscription?: string
     
 }
 
@@ -95,3 +96,4 @@ export const USER_MATCH = 'USER_MATCH';
 export const USER_CHAT = 'USER_CHAT';
 export const USER_MESSAGE = 'USER_MESSAGE';
 export const USER_CONVERSATION = 'USER_CONVERSATION';
+export const USER_LIKES = 'USER_LIKES';

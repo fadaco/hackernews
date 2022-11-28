@@ -1873,7 +1873,7 @@
     prompts "^2.4.0"
     semver "^6.3.0"
 
-"@react-native-community/clipboard@^1.2.2":
+"@react-native-community/clipboard@^1.5.1":
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/@react-native-community/clipboard/-/clipboard-1.5.1.tgz#32abb3ea2eb91ee3f9c5fb1d32d5783253c9fabe"
   integrity sha512-AHAmrkLEH5UtPaDiRqoULERHh3oNv7Dgs0bTC0hO5Z2GdNokAMPT5w8ci8aMcRemcwbtdHjxChgtjbeA38GBdA==
@@ -2060,12 +2060,10 @@
   dependencies:
     defer-to-connect "^1.0.1"
 
-"@twotalltotems/react-native-otp-input@^1.3.11":
-  version "1.3.11"
-  resolved "https://registry.yarnpkg.com/@twotalltotems/react-native-otp-input/-/react-native-otp-input-1.3.11.tgz#cd075f155be188bc9bb294ea8ef311667b8efb3d"
-  integrity sha512-xSsEMa8llYHITKgx1FGwU3uK56Kk6+abgkJpo57pLnUpYC2CZpvhkvRKhFa7Ui6BhdRuh0Ob1O7q234d3CksRg==
-  dependencies:
-    "@react-native-community/clipboard" "^1.2.2"
+"@twotalltotems/react-native-otp-input@1.3.7":
+  version "1.3.7"
+  resolved "https://registry.yarnpkg.com/@twotalltotems/react-native-otp-input/-/react-native-otp-input-1.3.7.tgz#9f7a2bfe097e9b85e0ea13ea49c43654d68da0f8"
+  integrity sha512-df4BpFhhwpa+IGWCUUXlL42bFoK0LggDG1hlNFVzjVZYPn4sr7Lwfynv6SV7C7fpfZ+KG6RmNbLLL0RZNjVILg==
 
 "@types/bcryptjs@^2.4.2":
   version "2.4.2"
@@ -6337,7 +6335,7 @@ internal-slot@^1.0.3:
     has "^1.0.3"
     side-channel "^1.0.4"
 
-invariant@^2.2.4:
+invariant@^2.2.2, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
   integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==
@@ -9172,7 +9170,7 @@ prop-types@15.7.2:
     object-assign "^4.1.1"
     react-is "^16.8.1"
 
-prop-types@^15.5.10, prop-types@^15.7.2, prop-types@^15.7.x:
+prop-types@^15.5.10, prop-types@^15.6.2, prop-types@^15.7.2, prop-types@^15.7.x:
   version "15.8.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -9554,10 +9552,24 @@ react-native-lightbox-v2@0.9.0:
   resolved "https://registry.yarnpkg.com/react-native-lightbox-v2/-/react-native-lightbox-v2-0.9.0.tgz#b97be4d892ebb959069c451948b11da390bc46d8"
   integrity sha512-Fc5VFHFj2vokS+OegyTsANKb1CYoUlOtAv+EBH5wtpJn1b5cey6jVXH7136G5+8OC9JmKWSgKHc5thFwOoZTUg==
 
+react-native-onesignal@^4.4.1:
+  version "4.4.1"
+  resolved "https://registry.yarnpkg.com/react-native-onesignal/-/react-native-onesignal-4.4.1.tgz#c79c94ea8622012adcd3d1e36ba91be6fa126453"
+  integrity sha512-vbS0E2TO5KljT0l1nAce04aOZF6FLv9oUaliffhFQR92oTHAbwNmwwMpxZF6CIcNANDDKkYtKPw5h7baUxmQdw==
+  dependencies:
+    invariant "^2.2.2"
+
 react-native-otp-input@^1.0.12:
   version "1.0.12"
   resolved "https://registry.yarnpkg.com/react-native-otp-input/-/react-native-otp-input-1.0.12.tgz#c798528b6e9e0ad84ab413faa527eb571ae15413"
   integrity sha512-QkWe1B+KFUA0/Hw47uzB0GNqffY5SyzJwliJB6yJyONPogi/j+bCyPdLoC9+tL4Jmc6gJGCP+5y3PwzMphsG5g==
+
+react-native-otp@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-otp/-/react-native-otp-1.0.0.tgz#0f206b4506cf1b76793677b7ced793130a9e5eee"
+  integrity sha512-9MPXwn6+3vORBgPzKXKf6kcYnEHcseHs7I/nbpxGxvGislJpUqhShiDLARuILJr3+JUn6RVw9pKo9vrMJWkENA==
+  dependencies:
+    prop-types "^15.6.2"
 
 react-native-pager-view@6.0.1:
   version "6.0.1"

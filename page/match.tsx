@@ -1,9 +1,12 @@
+import { useCallback } from 'react';
 import { FlatList, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
+import { useFocusEffect } from '@react-navigation/native';
+import {  getConversations } from '../store/actions/match.actions';
 import TextTypo from '../components/textTypo';
 import { useSelector, useDispatch } from 'react-redux';
 import { dispatchUserDetailToChat } from '../store/actions/match.actions';
-import { EMPTY_URL } from '../config';
+import { EMPTY_URL, URL } from '../config';
 
 const data = [
     {
@@ -42,9 +45,16 @@ export default function MatchScreen({ navigation }: any) {
     const { _id } = useSelector((state: any) => state.onboarding);
     const { user_matches, conversation_list } = useSelector((state: any) => state.match);
     const dispatch: any = useDispatch();
+
+      useFocusEffect(
+        useCallback(() => {
+            dispatch(getConversations())
+        }, [])
+    );
+
     return (
         <SafeAreaView style={{ paddingHorizontal: 20, backgroundColor: '#ffffff', flex: 1}}>
-            <TextTypo size={18} color="#251E1C" mt={20} title="New Matches" />
+            {user_matches.length ? <TextTypo size={18} color="#251E1C" mt={20} title="New Matches" /> : <></>}
             <View>
             <FlatList
                 showsHorizontalScrollIndicator={false}
@@ -59,7 +69,7 @@ export default function MatchScreen({ navigation }: any) {
                         })
                     }} key={index} style={styles.imageContainer}>
                         <Image style={styles.image} source={{
-                            uri: item.images.length ? item.images[0].image : EMPTY_URL
+                            uri: item.images.length ? URL + '' + item.images[0].image : EMPTY_URL
                         }} />
                      </TouchableOpacity>
                 )}
@@ -81,7 +91,7 @@ export default function MatchScreen({ navigation }: any) {
                             <View style={{flexDirection: 'row'}}>
                                 <View key={index} style={styles.imageContainerChat}>
                                 <Image style={styles.imageChat} source={{
-                                        uri: item.images.length ? item.images[0].image : EMPTY_URL
+                                        uri: item.images.length ? URL + '' + item.images[0].image : EMPTY_URL
                                     }} />
                                 </View>
                                 <View>

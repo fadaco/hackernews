@@ -20,6 +20,8 @@ export default function PhotoScreen({ route, navigation }: any) {
   const [images, setImages] = useState<any[]>([]);
   const [payData, setPayData] = useState<any[]>([]);
 
+  console.log(Img)
+
   const pickImage = async () => {
     try {
       let result: any = await ImagePicker.launchImageLibraryAsync({

@@ -17,6 +17,7 @@ export const USER = '/user';
 export const USER_LIST = '/user-list';
 export const USER_MATCHES = '/user-match';
 export const CONVERSATIONS = '/conversations';
+export const LIKES = '/likes';
 
 export const CATEGORY = (name: string) => `/category/${name}`
 

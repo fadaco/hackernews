@@ -25,7 +25,9 @@ export default function OtpVerifyScreen({ route, navigation }: any) {
                     profile: false
                 })
             } else {
-                navigation.navigate(getPageName(page))
+                navigation.navigate(getPageName(page), {
+                    profile: false
+                })
             }
         }, 1000)
     }, [])

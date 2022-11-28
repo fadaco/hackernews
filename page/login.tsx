@@ -37,10 +37,13 @@ export default function Login({navigation}: any) {
           onChangeText={text => handleUserInput(text, 'email')} />
         <PhoneInput
           defaultCode="NG"
+          textContainerStyle={{ backgroundColor: '#ffffff' }}
           layout="first"
           onChangeFormattedText={(text) => handleUserInput(text, 'phone_number')}
-          autoFocus
           containerStyle={styles.phone} />
+      </View>
+      <View>
+        
       </View>
       <Snackbar style={styles.snackbar} visible={message !== ''} onDismiss={() => setMessage('')}>{message}</Snackbar>
       <Footer  title="Next" loading={loading} submitData={async () => {
@@ -62,7 +65,8 @@ const styles = StyleSheet.create({
     container: {
     padding: 20,
     flex: 1,
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
+    textAlign: 'center',
   },
   phone: {
     borderWidth: 1,
@@ -73,6 +77,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff'
   },
   snackbar: {
-    marginTop: 100
+     marginBottom: 70,
+     justifyContent: 'center',
+     alignItems: 'center',
   }
   });

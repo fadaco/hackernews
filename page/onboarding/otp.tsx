@@ -10,7 +10,6 @@ import Footer from '../../components/footer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import OTPInputView from '@twotalltotems/react-native-otp-input'
 
-
 export default function OtpScreen({navigation}: any) {
   const [userParam, setUserParam] = useState<User>({
     _id: '',
@@ -37,15 +36,14 @@ export default function OtpScreen({navigation}: any) {
       <OTPInputView
           style={{width: '100%', height: 120}}
           pinCount={4}
-              autoFocusOnLoad
-              codeInputHighlightStyle={styles.underlineStyleHighLighted}
-              codeInputFieldStyle={{width: 65, borderWidth: 1, borderColor: '#5f1489', color: '#000000'}}
+          //autoFocusOnLoad
+          codeInputHighlightStyle={styles.underlineStyleHighLighted}
+        codeInputFieldStyle={{width: 65, borderWidth: 1, borderColor: '#5f1489', color: '#000000'}}
         onCodeFilled={(async(code) => {
           const response = await verifyOtp({
             ...userParam,
             otp: code
           })
-          console.log(response)
           if (response.status) {
             await AsyncStorage.setItem('token', response.data.token)
             navigation.navigate('otpVerify', {
@@ -55,15 +53,15 @@ export default function OtpScreen({navigation}: any) {
             setMessage(response.message)
           }
 
-          // setUserParam({
-          //   ...userParam,
-          //   otp: code
-          // })
-        })} />
+        })}
+      />
+
+       
       
       <View style={{flexDirection: 'row'}}>
         <TextTypo title="Didn’t get an email? " />
         <TouchableNativeFeedback onPress={async () => {
+          console.log('dkjdkjdj')
           const response = await reSendOtp(userParam)
           setMessage(response.message)
         }}>
@@ -71,21 +69,6 @@ export default function OtpScreen({navigation}: any) {
         </TouchableNativeFeedback> 
       </View>
       <Snackbar style={styles.snackbar} visible={message !== ''} onDismiss={() => setMessage('')}>{message}</Snackbar>
-
-      {/* <Footer title="Next" loading={loading} submitData={async () => {
-                    setLoading(true)
-                    const response = await verifyOtp(userParam)
-                    g(response)
-                    if (response.status) {
-                      await AsyncStorage.setItem('token', response.data.token)
-                      navigation.navigate('otpVerify', {
-                        page: response.data.redirect_url
-                      })
-                    } else {
-                      setMessage(response.message)
-                    }
-                    setLoading(false)
-      }} /> */}
     </SafeAreaView>
   )
 }

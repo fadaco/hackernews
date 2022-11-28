@@ -16,6 +16,7 @@ export const dispatchChatToStore = (payload: any) => async (dispatch: Dispatch) 
 
 }
 
+
 export const clearUserObject = () => async (dispatch: Dispatch) => {
     dispatch({type: CLEAR_USER_DATA})
 }
@@ -34,6 +35,8 @@ export const setUpProfile = async (payload: SetUpUserProfile) => {
     const response = await SERVER_REQUEST(SETUP_PROFILE, 'post', payload);
     return response;
 }
+
+
 
 export const uploadImage = async (payload: SetUpUserProfile) => {
     const response = await UPLOAD_IMAGE(UPLOAD_IMAGE_PROFILE, 'post', payload);

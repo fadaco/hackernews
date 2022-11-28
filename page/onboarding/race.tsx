@@ -36,7 +36,9 @@ export default function RaceScreen({ navigation }: any) {
            name: value
          })
          if (response.status) {
-          navigation.navigate('intention')
+           navigation.navigate('intention', {
+            profile: false
+          })
          } else {
            setMessage(response.message)
            }

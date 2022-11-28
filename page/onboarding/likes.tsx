@@ -49,7 +49,9 @@ export default function LikeScreen({ navigation }: any) {
                         setMessage('select at least one sports and interest to continue')
                     } else {
                         if (res1.status && res2.status) {
-                            navigation.navigate('height')
+                            navigation.navigate('height', {
+                                profile: false
+                            })
                         }
                     }
                     setLoading(false)

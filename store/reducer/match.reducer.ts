@@ -1,4 +1,4 @@
-import { LIST_USER, ActionType, USER_MATCH, USER_CHAT, USER_MESSAGE, USER_CONVERSATION } from "../type";
+import { LIST_USER, ActionType, USER_MATCH, USER_CHAT, USER_MESSAGE, USER_CONVERSATION, USER_LIKES } from "../type";
 
 const INIT_VALUES = {
     matches: [],
@@ -6,16 +6,12 @@ const INIT_VALUES = {
     user_matches: [],
     user_chat: {},
     user_message: [],
-    conversation_list: []
+    conversation_list: [],
+    user_likes: []
 }
 
 const MatchReducer = (state = INIT_VALUES, action: ActionType) => {
     switch (action.type) {
-        case LIST_USER:
-            return {
-                ...state,
-                ...action.payload
-            }
         case USER_MATCH:
             return {
                 ...state,
@@ -37,10 +33,21 @@ const MatchReducer = (state = INIT_VALUES, action: ActionType) => {
                       _id: action.payload.senderId,
                     }}]
             }
+        case USER_LIKES:
+            return {
+                ...state,
+                user_likes: [...action.payload]
+            }
         case USER_CONVERSATION:
             return {
                 ...state,
                 conversation_list: [...action.payload]
+            }
+        case LIST_USER:
+            console.log(action.payload)
+            return {
+                ...state,
+                userList: [...action.payload]
             }
             default:
                 return state;

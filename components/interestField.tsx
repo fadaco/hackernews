@@ -1,18 +1,23 @@
 import { useState, useEffect} from 'react';
 import SafeAreaView from 'react-native-safe-area-view';
 import { View, StyleSheet, FlatList } from 'react-native';
-import { useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import {dispatchUserDetailToStore} from '../store/actions/onboarding.actions'
 import { Checkbox, Snackbar } from 'react-native-paper';
 import TextTypo from './textTypo';
 import { INTERESTS } from '../data';
+import Footer from './footer';
+import { setUpProfile } from '../store/actions/onboarding.actions';
 
 
-export default function InterestFieldScreen({ navigation }: any) {
+export default function InterestFieldScreen({ route, navigation }: any) {
+  const { interests } = useSelector((state: any) => state.onboarding);
+  const [loading, setIsLoading] = useState<boolean>(false);
   const [categories, setCategories] = useState<string[]>(INTERESTS)
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(interests.length > 0 ? interests : []);
   const dispatch: any = useDispatch();
   const [message, setMessage] = useState<string>('')
+  const profile = route?.params?.profile;
 
   useEffect(() => {
     dispatch(dispatchUserDetailToStore({interests: selectedCategories}))
@@ -32,7 +37,7 @@ export default function InterestFieldScreen({ navigation }: any) {
 
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, {padding: profile ? 20 : 0}]}>
       <TextTypo fw="bold" size={25} mv={15} title="Choose up to 5 interests" />
       <FlatList
          keyExtractor={(item, index) => index.toString()}      
@@ -44,7 +49,16 @@ export default function InterestFieldScreen({ navigation }: any) {
           </View>
       )}
       />
- <Snackbar style={styles.snackbar} visible={message !== ''} onDismiss={() => setMessage('')}>{message}</Snackbar>    
+      <Snackbar style={styles.snackbar} visible={message !== ''} onDismiss={() => setMessage('')}>{message}</Snackbar> 
+      {profile ? <Footer loading={loading} title="Update" submitData={async () => {
+        setIsLoading(true)
+        await setUpProfile({
+          type: 'interests',
+          name: selectedCategories
+        })
+        setIsLoading(false)
+      }} /> : <></>}
+   
     </SafeAreaView>
   )
 }

@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { TouchableOpacity, Text, Image, View, Button } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import dashboardScreen from './dashboard';
+import DashboardScreen from './dashboard';
 import { getUser } from '../store/actions/onboarding.actions';
-import { getUserMatches, getConversations } from '../store/actions/match.actions';
+import { getUserMatches, getConversations, getLikes } from '../store/actions/match.actions';
 import profileScreen from './profile';
 import landingScreen from './landing';
 import { Avatar, Badge } from 'react-native-paper';
@@ -27,6 +28,9 @@ import profileDetailScreen from './profile/profileDetail';
 import updateProfileScreen from './profile/updateProfile';
 import matchScreen from './match';
 import chatcreen from './chat';
+import interestFieldScreen from '../components/interestField';
+import sportScreen from '../components/sport';
+import userLikeScreen from './userlikes';
 import { useSelector, useDispatch } from 'react-redux'
 import socket from '../shared/socket';
 import jwt_decode from "jwt-decode";
@@ -48,34 +52,6 @@ export default function Home() {
     const dispatch: any = useDispatch();
 
     
-    const UserProfile = () => {
-        return (
-            <Stack.Navigator screenOptions={{
-                headerBackTitleVisible: false,
-                headerShadowVisible: false,
-            }}>
-                <Stack.Screen name="profileLanding" component={profileScreen} options={{
-                       headerTitle: ''
-                }} />
-                
-                 <Stack.Screen name="profileDetail" component={profileDetailScreen} options={{
-                      headerShown: false
-                }} />
-
-            <Stack.Screen name="updateProfile" component={updateProfileScreen} options={{
-                      headerTitle: ''
-                }} />
-                
-                <Stack.Screen name="photo" component={photoScreen} options={{
-                        headerTitle: ''
-                    }} />
-                
-            </Stack.Navigator>
-        )
-    }
-
-
-    
     socket.on('connect', () => {
         setIsConnected(true);
       });
@@ -87,7 +63,10 @@ export default function Home() {
             if (token !== null && isComplete !== null) {
                const userId: any = jwt_decode(token);
               setIsProfileCompleted(true)
-             
+              dispatch(getUser());
+              dispatch(getLikes())
+               dispatch(getUserMatches())
+              dispatch(getConversations())
                 
                 socket.emit('addUser', {
                       id: userId.id,
@@ -96,7 +75,6 @@ export default function Home() {
                 
                 socket.on('getUsers', (data) => {   
                     console.log(data)  
-                    console.log(userId.id)
               dispatch(dispatchUserDetailToStore({socket_id: data[userId.id].socketId}))
                 })
                 
@@ -111,77 +89,70 @@ export default function Home() {
             setIsProfileCompleted(false)
           }
         } catch (error) {
-          // Error retrieving data
+          console.log('error')
         }
     };
 
     useEffect(() => {
         try {
-            dispatch(getUser())
-            dispatch(getUserMatches())
-            dispatch(getConversations())
-        } catch (e) {
+            getIsLoggedIn();
             
+        } catch (e) {
+            console.log(e)
         }
-      
-    }, [_id])
-
-    useEffect(() => {
-        getIsLoggedIn()
     }, [])
 
-    const UserChat = () => {
-        return (
-            <Stack.Navigator screenOptions={{
-                headerBackTitleVisible: false,
-                headerShadowVisible: false,
-            }}>
-                <Stack.Screen name="match" component={matchScreen} options={{
-                       headerShown: false
-                }} />
-                
+   
 
-                <Stack.Screen name="chat" component={chatcreen} options={{
+    return (
+        <>
+            {((isLoggedIn || isProfileCompleted)) ?
+                <Stack.Navigator>
+                    <Stack.Screen name="landingHome" component={TabPage} options={{ headerShown: false }} />
+                    <Stack.Screen name="chat" component={chatcreen} options={{
                     headerTitle: () => <View>
                         <Image style={{width: 32, height: 32, borderRadius: 50}} source={{
-                            uri: user_chat?.images?.length ? user_chat.images[0].image : EMPTY_URL
+                            uri: user_chat?.images?.length ? URL + '' + user_chat.images[0].image : EMPTY_URL
                         }} />
                         <TextTypo title={ user_chat.full_name} mt={4} ta="center" />
                     </View>,
                     headerRight: () => (<Avatar.Icon style={{backgroundColor: 'none'}} size={40} color="#5f1489"  icon="dots-vertical" />),
-                 }}  />
-                
-            </Stack.Navigator>
-        )
-      }
+                    }} />
 
-    return (
-        <>
-            {(isLoggedIn || isProfileCompleted) ?
-                <>
-                <Tab.Navigator
-                    initialRouteName="dashboard"
-                    screenOptions={{
-                        headerShown: false
-                      }}
-                >
-                     <Tab.Screen name="profile" component={UserProfile} options={{
-                        tabBarIcon: ({ color, size }) => <Image source={require('../assets/icons/person.png')} />,
-                            tabBarLabel: '',
-                        
+                      <Stack.Screen name="profileDetail" component={profileDetailScreen} options={{
+                        headerTitle: '',
+                        headerBackTitle: ''
+                }} />
+
+                    <Stack.Screen name="updateProfile" component={updateProfileScreen} options={{
+                        headerTitle: ''
                     }} />
-                    <Tab.Screen name="dashboard" component={dashboardScreen} options={{
-                            tabBarIcon: ({ color, size }) => <Image style={{ width: 24, height: 24, borderRadius: 10}} source={require('../assets/icons/logo.png')} />,
-                        tabBarLabel: '',
-                        
+
+                    <Stack.Screen name="identifyAs" component={identifyAsScreen} options={{
+                                            headerTitle: ''
                     }} />
-            
-                    <Tab.Screen name="user" component={UserChat} options={{
-                            tabBarIcon: ({ color, size }) => <View style={{position: 'relative'}}><Image source={require('../assets/icons/chat.png')} /><Badge size={5} visible={user_message.length > 0} style={{position: 'absolute'}} /></View>,
-                        tabBarLabel: ''
+                    
+                    <Stack.Screen name="height" component={heightScreen} options={{
+                       headerTitle: ''
                     }} />
-                    </Tab.Navigator>
-                    </>
+
+                    <Stack.Screen name="interested" component={interestFieldScreen} options={{
+                       headerTitle: ''
+                    }} />
+
+                    <Stack.Screen name="sports" component={sportScreen} options={{
+                       headerTitle: ''
+                    }} />
+
+                    <Stack.Screen name="intention" component={intentionScreen} options={{
+                        headerTitle: ''
+                    }} />
+                    
+                    <Stack.Screen name="photo" component={photoScreen} options={{
+                        headerTitle: '',
+                        headerBackTitle: ''
+                        }} />
+                </Stack.Navigator>
                 :  
                 <Stack.Navigator screenOptions={{
                     headerBackTitleVisible: false,
@@ -190,7 +161,8 @@ export default function Home() {
                         fontFamily: 'Averta',
                     },
                     headerTintColor: '#6b4ead'
-                  }}>
+                }}>
+                   
                     <Stack.Screen name="landing" component={landingScreen} options={{
                         headerShown: false
                     }} />
@@ -235,12 +207,48 @@ export default function Home() {
                        headerTitle: ''
                     }} />
                      
-             </Stack.Navigator> 
+                </Stack.Navigator> 
                } 
             </>
     );
 }
 
+
+const TabPage = () => {
+    const { user_chat, user_message } = useSelector((state: any) => state.match);
+    const dispatch: any = useDispatch();
+    return (
+        <Tab.Navigator
+        initialRouteName="dashboard"
+        screenOptions={{
+            headerShown: false
+          }}
+        >
+            <Tab.Screen name="profile" component={profileScreen} options={{
+                tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="account-outline" color={color} size={size} />,
+                    tabBarLabel: '',
+                
+            }} />
+
+            <Tab.Screen name="dashboard" component={DashboardScreen} options={{
+                    tabBarIcon: ({ color, size }) => <Image style={{ width: 24, height: 24, borderRadius: 10}} source={require('../assets/icons/logo.png')} />,
+                tabBarLabel: '',
+                
+                }} />
+            
+            <Tab.Screen name="userLike" component={userLikeScreen} options={{
+                tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="cards-heart-outline" color={color} size={size} />,
+                tabBarLabel: '',
+            }} />
+
+            <Tab.Screen name="user" component={matchScreen} options={{
+                    tabBarIcon: ({ color, size }) => <View style={{position: 'relative'}}><MaterialCommunityIcons name="chat-outline" color={color} size={size} /><Badge size={5} visible={user_message.length > 0} style={{position: 'absolute'}} /></View>,
+                tabBarLabel: ''
+            }} />
+        </Tab.Navigator>
+
+    )
+}
 
 
   

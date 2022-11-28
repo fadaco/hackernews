@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import SafeAreaView from 'react-native-safe-area-view';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { useDispatch } from 'react-redux'
+import { useSelector, useDispatch  } from 'react-redux'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Button } from 'react-native-paper';
 import { goToDashboard, setUpProfile } from '../../store/actions/onboarding.actions';
@@ -13,10 +13,12 @@ import TextTypo from '../../components/textTypo';
 import { HEIGHTS } from '../../data';
 
 
-export default function HeightScreen({ navigation }: any) {
+export default function HeightScreen({ route, navigation }: any) {
+  const { height } = useSelector((state: any) => state.onboarding);
+  const { profile } = route.params;
   const [categories, setCategories] = useState<string[]>(HEIGHTS)
   const [loading, setLoading] = useState<boolean>(false)
-  const [selectedLanguage, setSelectedLanguage] = useState();
+  const [selectedLanguage, setSelectedLanguage] = useState(height);
     const actionSheetRef = useRef<ActionSheetRef>(null);
   const dispatch: any = useDispatch();
    const [message, setMessage] = useState<string>('')
@@ -50,13 +52,13 @@ export default function HeightScreen({ navigation }: any) {
 
             </View>   
         </ActionSheet>
-      <Footer loading={loading} title="Next" submitData={async () => {
+      <Footer loading={loading} title={profile ? "Update" : "Next"} submitData={async () => {
         setLoading(true)
         const response = await setUpProfile({
           type: 'height',
           name: selectedLanguage
         })
-        if (response.status) {
+        if (response.status && !profile) {
           await AsyncStorage.setItem(
             'isComplete',
             'true'

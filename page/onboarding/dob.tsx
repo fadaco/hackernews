@@ -32,7 +32,9 @@ export default function DobScreen({ navigation }: any) {
                 name: date.getDate() + '-' + (Number(date.getMonth()) + 1)+ '-' + date.getFullYear()
               })
               if (response.status) {
-                navigation.navigate('identifyAs')
+                navigation.navigate('identifyAs', {
+                  profile: false
+                })
               } else {
                 setMessage(response.message)
                 }
