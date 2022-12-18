@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import reducer from './store/reducer';
 import Thunk from 'redux-thunk';
 import Home from './page';
+import 'expo-dev-menu';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 
@@ -17,6 +18,7 @@ export default function App() {
 
   let customFonts = {
     'Averta': require('./assets/fonts/AvertaDemo-Regular.otf'),
+    'Averta Bold': require('./assets/fonts/averta-bold.otf')
   };
 
   const _loadFontsAsync = async () => {

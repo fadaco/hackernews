@@ -63,7 +63,7 @@ export default function HeightScreen({ route, navigation }: any) {
             'isComplete',
             'true'
           );
-          dispatch(goToDashboard(true))
+          dispatch(goToDashboard(2))
         } else {
           setMessage(response.message)
         }

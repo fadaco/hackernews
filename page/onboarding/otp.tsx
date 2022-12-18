@@ -61,7 +61,6 @@ export default function OtpScreen({navigation}: any) {
       <View style={{flexDirection: 'row'}}>
         <TextTypo title="Didn’t get an email? " />
         <TouchableNativeFeedback onPress={async () => {
-          console.log('dkjdkjdj')
           const response = await reSendOtp(userParam)
           setMessage(response.message)
         }}>

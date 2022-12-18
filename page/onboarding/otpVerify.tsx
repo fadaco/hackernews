@@ -17,7 +17,7 @@ export default function OtpVerifyScreen({ route, navigation }: any) {
                     'isComplete',
                     'true'
                   );
-                dispatch(goToDashboard(true))
+                dispatch(goToDashboard(2))
                 navigation.navigate('dashboard')
             }
             if (page === 'set_up_image') {

@@ -2,10 +2,11 @@ import { View, StyleSheet, FlatList, Image } from "react-native";
 import SafeAreaView from 'react-native-safe-area-view';
 import { useSelector } from "react-redux";
 import TextTypo from "../components/textTypo";
-import { EMPTY_URL } from "../config";
+import { EMPTY_URL, PLACEHOLDER_IMAGE, URL } from "../config";
 
 export default function UserLikeScreen() { 
     const { user_likes } = useSelector((state: any) => state.match);
+    const { subscription } = useSelector((state: any) => state.onboarding);
 
     return (
         <SafeAreaView style={styles.container}>
@@ -18,8 +19,8 @@ export default function UserLikeScreen() {
               numColumns={2} data={user_likes}
                 renderItem={({item }) => (
                     <View style={styles.imageContainer}>
-                        <Image blurRadius={90} resizeMode='cover' style={styles.image} source={{
-                            uri: item.images.length ? URL + '' + item.images[0].image : EMPTY_URL
+                        <Image blurRadius={subscription === 'FREE' ? 90 : 1} defaultSource={{uri: PLACEHOLDER_IMAGE}} resizeMode='cover' style={styles.image} source={{
+                            uri: item.images.length ? (URL + '' + item.images[0].image) : EMPTY_URL
                         }}
                         />
                   </View>

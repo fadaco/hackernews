@@ -1,50 +1,59 @@
-import { useState, useEffect, useCallback } from 'react'
-import { StyleSheet } from 'react-native';
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
 import { Avatar} from 'react-native-paper';
 import { Actions, ActionsProps, GiftedChat, IMessage } from 'react-native-gifted-chat'
 import * as ImagePicker from 'expo-image-picker';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { openActionSheetModal } from '../store/actions/user.actions';
+import { blockUser, unMatchUser, getConversations } from '../store/actions/match.actions';
 import socket from '../shared/socket';
 import {Message } from '../store/type';
+import ActionSheet, {ActionSheetRef} from "react-native-actions-sheet";
+import TextTypo from '../components/textTypo';
+import uuid from 'react-native-uuid';
+import { EMPTY_URL } from '../config';
 
-export default function Chatcreen({ route }:any) {
+export default function Chatcreen({ route,itemId, navigation }:any) {
     const { chats } = route.params
     const [messages, setMessages] = useState<IMessage[]>([]);
-    const { socket_id, _id } = useSelector((state: any) => state.onboarding);
-    const { user_chat, user_message } = useSelector((state: any) => state.match);
-    let tmpChat:any = []
-     useEffect(() => {
-         chats.forEach((dt:any) => {
-             tmpChat.push({
-                 _id: Math.floor(Math.random() * 10000),
-                 text: dt.content,
-                 createdAt: new Date(),
-                 user: {
-                     _id: dt.sender
-                 }
-             })
-         })
-         setMessages((previousMessages:any) => GiftedChat.append(previousMessages, tmpChat.reverse()))
+    const { _id, full_name, images } = useSelector((state: any) => state.onboarding);
+    const actionSheetRef = useRef<ActionSheetRef>(null);
+    const { user_chat, user_message, actionSheet, user_send_message} = useSelector((state: any) => state.match);
+    const dispatch: any = useDispatch();
 
-        // console.log(user_chat._id)
-    setMessages((previousMessages:any) => GiftedChat.append(previousMessages, user_message.filter((dt:any) => user_chat._id === dt.user._id)))
-       }, [user_message.length])
+    useEffect(() => {
+        dispatch(getConversations());
+        setMessages([]);  
+       setMessages((previousMessages: any) => GiftedChat.append(previousMessages, chats))
+         if (user_send_message._id) {
+             setMessages((previousMessages: any) => GiftedChat.append([user_send_message],previousMessages))
+         }
+    }, [user_send_message._id]);
+    
+    useEffect(() => {
+        if (actionSheet) {
+            actionSheetRef.current?.show()
+        } else {
+            actionSheetRef.current?.hide()
+        }
+    }, [actionSheet])
 
     const onSend = useCallback((messages = []) => {
-        const {  createdAt, text, user,} = messages[0]
-
+        const {text, createdAt, user, _id}: any = messages[0];
+        setMessages((previousMessages: any) => GiftedChat.append(messages, previousMessages))
         socket.emit('sendMessage', {
-            senderId: _id,
+            _id,
+            senderId: user?._id,
             receiverId: user_chat._id,
             fullname: user_chat.full_name,
             deviceId: 3,
             text: text,
-            imageurl: user_chat.images.length ? user_chat.images[0].image : ''
+            read: false,
+            createdAt: createdAt,
+            imageurl: user_chat.images.length ? user_chat.images[0].image : '',
+            user: user
         })
-        console.log(messages)
-        
-        setMessages((previousMessages:any) => GiftedChat.append(previousMessages, messages))
     }, [])
 
 
@@ -73,26 +82,49 @@ export default function Chatcreen({ route }:any) {
                 <Avatar.Icon size={24} icon="attachment" />
                 )}
                 onSend={messages => onSend(messages)}
-            />
-        )
+            />)
     }
-
 
     return (
         <SafeAreaView style={styles.container}>
             <GiftedChat
-                infiniteScroll
                 placeholder="Write something..."
-                alignTop
-                inverted
+                inverted={false}
+                showUserAvatar={false}
                 renderActions={renderActions}
+                showAvatarForEveryMessage={true}
                 renderAvatar={() => null}
                 messages={messages}
                 onSend={(messages: any) => onSend(messages)}
                 user={{
                     _id: _id,
+                    name: full_name,
+                    avatar: images.length ? images[0].image : EMPTY_URL
                 }}
-                />
+                messageIdGenerator={() => String(uuid.v4())}
+            />
+             <ActionSheet ref={actionSheetRef} containerStyle={styles.actionsheet} onClose={() =>  dispatch(openActionSheetModal(false))}>
+                <TouchableOpacity onPress={async () => {
+                    const response = await unMatchUser(user_chat._id)
+                    if (response.status) {
+                        actionSheetRef.current?.hide();
+                        dispatch(getConversations());
+                        navigation.goBack()
+                    }
+                }}>
+                    <TextTypo mv={20} size={16} color="#6E6968" fontFamily="Averta Bold" title="Unmatch" /> 
+                </TouchableOpacity>
+                <TouchableOpacity onPress={async () => {
+                    const response = await blockUser(user_chat._id)
+                    if (response.status) {
+                        actionSheetRef.current?.hide()
+                        dispatch(getConversations())
+                        navigation.goBack()
+                    }
+                }}>
+                    <TextTypo size={16} color="#6E6968" fontFamily="Averta Bold" title="Block User" /> 
+                </TouchableOpacity>
+        </ActionSheet>
         </SafeAreaView>
     )
 }
@@ -101,6 +133,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#ffffff',
-        paddingHorizontal: 20
-    }
+    },
+    actionsheet: {
+        height: '20%',
+        padding: 20
+    },
 })

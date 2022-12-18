@@ -4,9 +4,9 @@ import { View, StyleSheet, FlatList, Image, TouchableOpacity, Platform } from 'r
 import { Button, Snackbar } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux'
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
-import { uploadImage, setUpProfile } from '../../store/actions/onboarding.actions';
+import { uploadImage, setUpProfile, deleteImage } from '../../store/actions/onboarding.actions';
 import Footer from '../../components/footer';
-import { EMPTY_URL, URL } from '../../config';
+import { EMPTY_URL, PLACEHOLDER_IMAGE, URL } from '../../config';
 import TextTypo from '../../components/textTypo';
 import * as ImagePicker from 'expo-image-picker';
 
@@ -17,10 +17,9 @@ export default function PhotoScreen({ route, navigation }: any) {
   const actionSheetRef = useRef<ActionSheetRef>(null);
   const [count, setCount] = useState<number>(0);
   const [message, setMessage] = useState<string>('')
-  const [images, setImages] = useState<any[]>([]);
-  const [payData, setPayData] = useState<any[]>([]);
-
-  console.log(Img)
+  const [images, setImages] = useState<any[]>([...Img]);
+  const [payData, setPayData] = useState<any[]>([...Img]);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
 
   const pickImage = async () => {
     try {
@@ -29,8 +28,9 @@ export default function PhotoScreen({ route, navigation }: any) {
         allowsEditing: true,
         aspect: [3, 3],
         quality: 1,
-      });
-      if (!result.canceled && (result.assets[0]?.fileName?.toLowerCase().includes('jpg') || result.assets[0].fileName?.toLowerCase()?.includes('png') || result.assets[0]?.fileName?.toLowerCase().includes('jpeg'))) {
+      });     
+      if (!result.canceled && (result.assets[0]?.uri?.toLowerCase().endsWith('jpg') || result.assets[0].uri?.toLowerCase()?.endsWith('heif') || result.assets[0].uri?.toLowerCase()?.endsWith('hei') || result.assets[0].uri?.toLowerCase()?.endsWith('png') || result.assets[0].uri?.toLowerCase()?.endsWith('heic') || result.assets[0]?.uri?.toLowerCase().endsWith('jpeg'))) {
+        setIsUploading(true);
         setImages(img => [...img, {
           image: result.assets[0].uri,
           default: false
@@ -40,23 +40,19 @@ export default function PhotoScreen({ route, navigation }: any) {
           setPayData(img => [...img, {
             image: res.data,
             default: false,
-            _id: ''
           }])
         }
-      } else {
-        setMessage('Unsupported file type')
-      }
+        setIsUploading(false);
+       } else if (result.canceled) {
+        
+       } else {
+         setMessage('Unsupported file type...')
+       }
     } catch (error) {
       console.log(error)    
     }
   };
 
-  useEffect(() => {
-    // if (profile) {
-    //   console.log(Img)
-    //   setImages(Img);
-    // }
-  }, [])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -67,39 +63,49 @@ export default function PhotoScreen({ route, navigation }: any) {
         <Image source={require('../../assets/icons/placeholder.png')}/>
       </TouchableOpacity> : <></>}
 
-      {images.length ? <FlatList numColumns={3} data={images}
-       keyExtractor={(item, index) => index.toString()}
+      {images.length ?
+        <FlatList numColumns={3} data={images}
+          keyExtractor={(item, index) => index.toString()}
         renderItem={({ item, index }) => (
-            <View style={styles.pickerContainer}>
-            <Image source={{ uri: (item._id ? URL : EMPTY_URL) + item.image }} style={{ width: 100, height: 100, borderRadius: 8, margin: 3 }} />
-            <TouchableOpacity style={styles.picker} onPress={() => {
+          <View style={styles.pickerContainer}>
+            <Image defaultSource={{uri: PLACEHOLDER_IMAGE}} source={{ uri: item._id ? (URL + '' + item.image) : item.image }} style={{ width: 100, height: 100, borderRadius: 8, margin: 3 }} />
+            {images.length > 1 && <TouchableOpacity style={styles.picker} onPress={() => {
               setCount(index)
               actionSheetRef.current?.show();
             }}>
               <Image source={require('../../assets/icons/cancel.png')}/>
-            </TouchableOpacity>
+            </TouchableOpacity>}
             </View>
-        )} /> : <></>}
+          )} /> : <></>}
+            
             <Snackbar style={styles.snackbar} visible={message !== ''} onDismiss={() => setMessage('')}>{message}</Snackbar>
         <ActionSheet ref={actionSheetRef}>
               <View style={styles.actionsheet}>
           <TextTypo fw="bold" size={25} mb={10} title="Delete this picture?"/>
           <TextTypo mb={40} size={16} color="#6E6968" title="Are you sure you want to delete this photo?" />
 
-          <Button onPress={() => {
-            setImages(images.filter((_, indexs) => count !== indexs))
-            actionSheetRef.current?.hide()
+          <Button loading={loading} onPress={async () => {
+            setLoading(true)
+            const response = await deleteImage(payData[count].image)
+            if (response.status) {
+               setPayData(payData.filter((_, indexs) => count !== indexs))
+               setImages(images.filter((_, indexs) => count !== indexs))
+               actionSheetRef.current?.hide()
+            }
+            setLoading(false)
           }} mode="contained" style={{ borderRadius: 8, paddingVertical: 6, backgroundColor: '#5f1489' }} labelStyle={{fontFamily: 'Averta'}}>Yes, delete</Button>
           <Button  onPress={() => actionSheetRef.current?.hide()} style={{ marginTop: 6,}} labelStyle={{fontFamily: 'Averta'}}>No, Cancel</Button>
             </View>   
         </ActionSheet>
          
-      <Footer loading={loading} title={profile ? "Update" : "Next"} submitData={async() => {
+      <Footer loading={loading || isUploading} title={!isUploading ? (profile ? "Update" : "Next") : "Uploading..."} submitData={async() => {
         setLoading(true)
+    
         const response: any = await setUpProfile({
           type: 'images',
           name: payData
         })
+       
         if (response.status) {
           navigation.navigate(profile ? 'profile' : 'complete')
         } else {
@@ -134,6 +140,7 @@ const styles = StyleSheet.create({
     bottom: -10
   },
   snackbar: {
-    marginTop: 100
+    position: 'relative',
+    top: -80
   }
   });

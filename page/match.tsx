@@ -2,56 +2,29 @@ import { useCallback } from 'react';
 import { FlatList, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
 import { useFocusEffect } from '@react-navigation/native';
-import {  getConversations } from '../store/actions/match.actions';
+import {  getConversations, getLikes, getUserMatches, clearChatField } from '../store/actions/match.actions';
 import TextTypo from '../components/textTypo';
 import { useSelector, useDispatch } from 'react-redux';
 import { dispatchUserDetailToChat } from '../store/actions/match.actions';
-import { EMPTY_URL, URL } from '../config';
+import { EMPTY_URL, URL, PLACEHOLDER_IMAGE } from '../config';
 
-const data = [
-    {
-        name: 'Alyssa',
-        icon: require('../assets/icons/testImage.png'),
-        chat: 'Hello'
-    },
-    {
-        name: 'Johan',
-        icon: require('../assets/icons/profile.png'),
-        chat: 'injury '
-    },
-    {
-        name: 'Messi',
-        icon: require('../assets/icons/testImage.png'),
-        chat: 'overall '
-    },
-    {
-        name: 'Rooney',
-        icon: require('../assets/icons/profile.png'),
-        chat: 'striker '
-    },
-    {
-        name: 'Ronaldo',
-        icon: require('../assets/icons/testImage.png'),
-        chat: 'goat '
-    },
-    {
-        name: 'Maradona',
-        icon: require('../assets/icons/profile.png'),
-        chat: 'world cup '
-    }
-]
+
 
 export default function MatchScreen({ navigation }: any) {
     const { _id } = useSelector((state: any) => state.onboarding);
-    const { user_matches, conversation_list } = useSelector((state: any) => state.match);
+    const { user_matches, conversation_list, user_message } = useSelector((state: any) => state.match);
+
     const dispatch: any = useDispatch();
 
       useFocusEffect(
         useCallback(() => {
             dispatch(getConversations())
+            dispatch(getLikes())
+            dispatch(getUserMatches())
+            dispatch(clearChatField())
         }, [])
-    );
-
+      );
+    
     return (
         <SafeAreaView style={{ paddingHorizontal: 20, backgroundColor: '#ffffff', flex: 1}}>
             {user_matches.length ? <TextTypo size={18} color="#251E1C" mt={20} title="New Matches" /> : <></>}
@@ -65,10 +38,11 @@ export default function MatchScreen({ navigation }: any) {
                     <TouchableOpacity onPress={() => {
                         dispatch(dispatchUserDetailToChat(item))
                         navigation.navigate('chat', {
-                            chats: []
+                            chats: [],
+                            data: item
                         })
                     }} key={index} style={styles.imageContainer}>
-                        <Image style={styles.image} source={{
+                        <Image style={styles.image} defaultSource={{uri: PLACEHOLDER_IMAGE}} source={{
                             uri: item.images.length ? URL + '' + item.images[0].image : EMPTY_URL
                         }} />
                      </TouchableOpacity>
@@ -78,6 +52,7 @@ export default function MatchScreen({ navigation }: any) {
             <TextTypo size={18} color="#251E1C" mt={20} title="Chats" />
             
             {/* <View style={{flex: 1}}> */}
+            
             <FlatList
                 keyExtractor={(item, index) => index.toString()}  
                 data={conversation_list}
@@ -85,21 +60,25 @@ export default function MatchScreen({ navigation }: any) {
                     <TouchableOpacity style={styles.chat} onPress={() => {
                         dispatch(dispatchUserDetailToChat(item))
                         navigation.navigate('chat', {
-                            chats: item.user_chats[_id]
+                            chats: item.user_chats[_id],
+                            data: item
                         })
                     }}>
                             <View style={{flexDirection: 'row'}}>
                                 <View key={index} style={styles.imageContainerChat}>
-                                <Image style={styles.imageChat} source={{
-                                        uri: item.images.length ? URL + '' + item.images[0].image : EMPTY_URL
+                                <Image style={styles.imageChat} defaultSource={{uri: PLACEHOLDER_IMAGE}} source={{
+                                        uri:  URL + '' + item.images[0].image || PLACEHOLDER_IMAGE
                                     }} />
                                 </View>
                                 <View>
                                     <TextTypo fw="bold" mb={15} title={item.full_name} />
-                                    <TextTypo title={item.user_chats[_id][item.user_chats[_id].length - 1].content} />
+                                    <TextTypo title={item.user_chats[_id][item.user_chats[_id].length - 1].text} />
                                 </View>
                             </View>
-                            <View>
+                        <View style={{flexDirection: 'row'}}>
+                            {/* <View style={{height: 20, width: 20, backgroundColor: 'tomato', borderRadius: 50}}>
+                            <TextTypo color="#ffffff" title={JSON.stringify(user_message.filter((td: any) => (td.user._id === item._id) && (td.read))).length} />
+                            </View> */}
                                 <Image source={require('../assets/icons/read.png')} />
                             </View>
                     </TouchableOpacity>

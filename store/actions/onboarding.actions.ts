@@ -1,5 +1,5 @@
 import { Dispatch } from 'redux';
-import {SERVER_REQUEST, UPLOAD_IMAGE_PROFILE, UPLOAD_IMAGE, VERIFY_OTP, EMAIL_AND_PHONE_LOGIN, RESEND_OTP, SETUP_PROFILE, USER} from '../../config';
+import {SERVER_REQUEST, UPLOAD_IMAGE_PROFILE, UPLOAD_IMAGE, VERIFY_OTP, EMAIL_AND_PHONE_LOGIN, RESEND_OTP, SETUP_PROFILE, USER, DELETE_IMAGE} from '../../config';
 import { USER_DETAIL, User, CLEAR_USER_DATA, SET_LOGIN_IN, SetUpUserProfile, USER_MESSAGE } from '../type';
 
 export const loggedInWithEmailAndPhoneNumber = async (payload: User) => {
@@ -36,6 +36,13 @@ export const setUpProfile = async (payload: SetUpUserProfile) => {
     return response;
 }
 
+export const deleteImage = async (name:string) => {
+    const response = await SERVER_REQUEST(DELETE_IMAGE, 'post', {
+        name
+    });
+    return response;
+}
+
 
 
 export const uploadImage = async (payload: SetUpUserProfile) => {
@@ -43,7 +50,7 @@ export const uploadImage = async (payload: SetUpUserProfile) => {
     return response;
 }
  
-export const goToDashboard = (value: boolean) =>async (dispatch: Dispatch) => {
+export const goToDashboard = (value: number) =>async (dispatch: Dispatch) => {
     dispatch({type: SET_LOGIN_IN, payload: value})
 
 }
@@ -51,5 +58,6 @@ export const goToDashboard = (value: boolean) =>async (dispatch: Dispatch) => {
 export const getUser = () => async (dispatch: Dispatch) => {
     const response = await SERVER_REQUEST(USER, 'get');
     const { data } = response;
+    console.log(data);
     dispatch({type: USER_DETAIL, payload: data})
 }

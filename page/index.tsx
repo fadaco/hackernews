@@ -9,9 +9,10 @@ import { getUser } from '../store/actions/onboarding.actions';
 import { getUserMatches, getConversations, getLikes } from '../store/actions/match.actions';
 import profileScreen from './profile';
 import landingScreen from './landing';
-import { Avatar, Badge } from 'react-native-paper';
+import { IconButton, Badge } from 'react-native-paper';
 import loginScreen from './login';
 import { dispatchUserDetailToStore, dispatchChatToStore } from '../store/actions/onboarding.actions';
+import { openActionSheetModal } from '../store/actions/user.actions';
 import otpScreen from './onboarding/otp';
 import nameScreen from './onboarding/name';
 import dobScreen from './onboarding/dob';
@@ -31,11 +32,13 @@ import chatcreen from './chat';
 import interestFieldScreen from '../components/interestField';
 import sportScreen from '../components/sport';
 import userLikeScreen from './userlikes';
+import settingScreen from './settings';
+import settingsDetailcreen from './settings/settingsDetail';
 import { useSelector, useDispatch } from 'react-redux'
 import socket from '../shared/socket';
 import jwt_decode from "jwt-decode";
 import TextTypo from '../components/textTypo';
-import { EMPTY_URL } from '../config';
+import { EMPTY_URL, PLACEHOLDER_IMAGE, URL } from '../config';
 
 
 const Stack = createNativeStackNavigator();
@@ -45,9 +48,9 @@ const Tab = createBottomTabNavigator();
 export default function Home() { 
     const { isLoggedIn } = useSelector((state: any) => state.user);
     const { _id } = useSelector((state: any) => state.onboarding);
-    const { user_chat, user_message } = useSelector((state: any) => state.match);
-
-    const [isProfileCompleted, setIsProfileCompleted] = useState(false)
+    const { user_chat, user_message, reload } = useSelector((state: any) => state.match);
+    const [connectedUser, setConnectedUser] = useState<any>({})
+    const [isProfileCompleted, setIsProfileCompleted] = useState<number>(0)
     const [isConnected, setIsConnected] = useState(socket.connected);
     const dispatch: any = useDispatch();
 
@@ -61,12 +64,12 @@ export default function Home() {
             const token = await AsyncStorage.getItem('token');
             const isComplete = await AsyncStorage.getItem('isComplete');
             if (token !== null && isComplete !== null) {
-               const userId: any = jwt_decode(token);
-              setIsProfileCompleted(true)
-              dispatch(getUser());
-              dispatch(getLikes())
-               dispatch(getUserMatches())
-              dispatch(getConversations())
+                const userId: any = jwt_decode(token);
+                setIsProfileCompleted(2);
+                dispatch(getUser());
+                dispatch(getLikes())
+                dispatch(getUserMatches())
+                dispatch(getConversations())
                 
                 socket.emit('addUser', {
                       id: userId.id,
@@ -74,7 +77,7 @@ export default function Home() {
                 })
                 
                 socket.on('getUsers', (data) => {   
-                    console.log(data)  
+               setConnectedUser(data)
               dispatch(dispatchUserDetailToStore({socket_id: data[userId.id].socketId}))
                 })
                 
@@ -86,7 +89,7 @@ export default function Home() {
                 setIsConnected(false);
               });
           } else {
-            setIsProfileCompleted(false)
+            setIsProfileCompleted(1)
           }
         } catch (error) {
           console.log('error')
@@ -96,121 +99,137 @@ export default function Home() {
     useEffect(() => {
         try {
             getIsLoggedIn();
-            
         } catch (e) {
             console.log(e)
         }
-    }, [])
+    }, [isLoggedIn, isProfileCompleted, reload])
 
-   
+    if ((isLoggedIn === 2 || isProfileCompleted === 2)) {
+        return  <Stack.Navigator>
+        <Stack.Screen name="landingHome" component={TabPage} options={{ headerShown: false }} />
+        <Stack.Screen name="chat" component={chatcreen} options={{
+            headerTitle: (props) => <View style={{ flexDirection: 'row' }}>
+                <Image defaultSource={{
+                    uri: PLACEHOLDER_IMAGE
+                
+                }} style={{ height: 40, width: 40, borderRadius: 50, marginRight: 5 }} source={{ uri: URL + '' + user_chat.images[0].image }} />
+                <View>
+                    <TextTypo title={user_chat.full_name} mt={4} ta="center" />
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <View style={{ backgroundColor: connectedUser[user_chat._id] ? 'green' : 'red', height: 10, width: 10, borderRadius: 50, borderWidth: 2, borderColor: '#ffffff' }} />
+                        <TextTypo size={11} title={connectedUser[user_chat._id] ? 'Online' : 'Offline'} />
 
-    return (
-        <>
-            {((isLoggedIn || isProfileCompleted)) ?
-                <Stack.Navigator>
-                    <Stack.Screen name="landingHome" component={TabPage} options={{ headerShown: false }} />
-                    <Stack.Screen name="chat" component={chatcreen} options={{
-                    headerTitle: () => <View>
-                        <Image style={{width: 32, height: 32, borderRadius: 50}} source={{
-                            uri: user_chat?.images?.length ? URL + '' + user_chat.images[0].image : EMPTY_URL
-                        }} />
-                        <TextTypo title={ user_chat.full_name} mt={4} ta="center" />
-                    </View>,
-                    headerRight: () => (<Avatar.Icon style={{backgroundColor: 'none'}} size={40} color="#5f1489"  icon="dots-vertical" />),
-                    }} />
+                    </View>
+                </View>
+            </View>,
+            headerRight: (props) => (<IconButton onPress={() => dispatch(openActionSheetModal(true))} style={{ backgroundColor: 'none' }} size={20} iconColor="#5f1489" icon="dots-vertical" />),
+            headerBackTitle: '',
+            
+        }} initialParams={{ itemId: 42 }} />
 
-                      <Stack.Screen name="profileDetail" component={profileDetailScreen} options={{
-                        headerTitle: '',
-                        headerBackTitle: ''
-                }} />
+        <Stack.Screen name="profileDetail" component={profileDetailScreen} options={{
+            headerTitle: '',
+            headerBackTitle: ''
+        }} />
 
-                    <Stack.Screen name="updateProfile" component={updateProfileScreen} options={{
-                        headerTitle: ''
-                    }} />
+        <Stack.Screen name="updateProfile" component={updateProfileScreen} options={{
+            headerTitle: ''
+        }} />
 
-                    <Stack.Screen name="identifyAs" component={identifyAsScreen} options={{
-                                            headerTitle: ''
-                    }} />
-                    
-                    <Stack.Screen name="height" component={heightScreen} options={{
-                       headerTitle: ''
-                    }} />
+        <Stack.Screen name="identifyAs" component={identifyAsScreen} options={{
+            headerTitle: ''
+        }} />
+        
+        <Stack.Screen name="height" component={heightScreen} options={{
+            headerTitle: ''
+        }} />
 
-                    <Stack.Screen name="interested" component={interestFieldScreen} options={{
-                       headerTitle: ''
-                    }} />
+        <Stack.Screen name="interested" component={interestFieldScreen} options={{
+            headerTitle: ''
+        }} />
 
-                    <Stack.Screen name="sports" component={sportScreen} options={{
-                       headerTitle: ''
-                    }} />
+        <Stack.Screen name="sports" component={sportScreen} options={{
+            headerTitle: ''
+        }} />
 
-                    <Stack.Screen name="intention" component={intentionScreen} options={{
-                        headerTitle: ''
-                    }} />
-                    
-                    <Stack.Screen name="photo" component={photoScreen} options={{
-                        headerTitle: '',
-                        headerBackTitle: ''
-                        }} />
-                </Stack.Navigator>
-                :  
-                <Stack.Navigator screenOptions={{
-                    headerBackTitleVisible: false,
-                    headerShadowVisible: false,
-                    headerTitleStyle: {
-                        fontFamily: 'Averta',
-                    },
-                    headerTintColor: '#6b4ead'
-                }}>
-                   
-                    <Stack.Screen name="landing" component={landingScreen} options={{
-                        headerShown: false
-                    }} />
-                    <Stack.Screen name="login" component={loginScreen} options={{
-                        headerTitle: 'Sign up',
-                        headerBackVisible: false
-                    }} />
-                    <Stack.Screen name="otp" component={otpScreen}  options={{
-                        headerTitle: 'Verify your email'
-                    }}/>
-                    <Stack.Screen name="otpVerify" component={otpVerifyScreen} options={{
-                        headerShown: false
-                    }} />
-                    <Stack.Screen name="name" component={nameScreen}  options={{
-                        headerShown: false
-                    }} />
-                    <Stack.Screen name="dob" component={dobScreen} options={{
-                        headerTitle: ''
-                    }} />
-                    <Stack.Screen name="identifyAs" component={identifyAsScreen} options={{
-                        headerTitle: ''
-                    }}/>
-                    <Stack.Screen name="race" component={raceScreen}  options={{
-                        headerTitle: ''
-                    }}/>
-                    <Stack.Screen name="intention" component={intentionScreen} options={{
-                        headerTitle: ''
-                    }} />
-                    <Stack.Screen name="interestedIn" component={interestedInScreen}  options={{
-                        headerTitle: ''
-                    }}/>
-                    <Stack.Screen name="photo" component={photoScreen} options={{
-                        headerTitle: ''
-                    }} />
-                    <Stack.Screen name="likes" component={likeScreen} options={{
-                        headerTitle: ''
-                    }} />
-                     <Stack.Screen name="complete" component={completeScreen} options={{
-                       headerShown: false
-                    }} />
-                     <Stack.Screen name="height" component={heightScreen} options={{
-                       headerTitle: ''
-                    }} />
-                     
-                </Stack.Navigator> 
-               } 
-            </>
-    );
+        <Stack.Screen name="intention" component={intentionScreen} options={{
+            headerTitle: ''
+        }} />
+
+        <Stack.Screen name="settings" component={settingScreen} options={{
+            headerBackTitle: ''
+
+        }} />
+        
+        <Stack.Screen name="settingsDetail" component={settingsDetailcreen} options={{
+            headerBackTitle: ''
+
+        }} />
+        
+        <Stack.Screen name="photo" component={photoScreen} options={{
+            headerTitle: '',
+            headerBackTitle: ''
+        }} />
+    </Stack.Navigator>
+    } else if ((isLoggedIn === 1 || isProfileCompleted === 1)) {
+        return  <Stack.Navigator screenOptions={{
+            headerBackTitleVisible: false,
+            headerShadowVisible: false,
+            headerTitleStyle: {
+                fontFamily: 'Averta',
+            },
+            headerTintColor: '#6b4ead'
+        }}>
+           
+            <Stack.Screen name="landing" component={landingScreen} options={{
+                headerShown: false
+            }} />
+            <Stack.Screen name="login" component={loginScreen} options={{
+                headerTitle: 'Sign up',
+                headerBackVisible: false
+            }} />
+            <Stack.Screen name="otp" component={otpScreen}  options={{
+                headerTitle: 'Verify your email'
+            }}/>
+            <Stack.Screen name="otpVerify" component={otpVerifyScreen} options={{
+                headerShown: false
+            }} />
+            <Stack.Screen name="name" component={nameScreen}  options={{
+                headerShown: false
+            }} />
+            <Stack.Screen name="dob" component={dobScreen} options={{
+                headerTitle: ''
+            }} />
+            <Stack.Screen name="identifyAs" component={identifyAsScreen} options={{
+                headerTitle: ''
+            }}/>
+            <Stack.Screen name="race" component={raceScreen}  options={{
+                headerTitle: ''
+            }}/>
+            <Stack.Screen name="intention" component={intentionScreen} options={{
+                headerTitle: ''
+            }} />
+            <Stack.Screen name="interestedIn" component={interestedInScreen}  options={{
+                headerTitle: ''
+            }}/>
+            <Stack.Screen name="photo" component={photoScreen} options={{
+                headerTitle: ''
+            }} />
+            <Stack.Screen name="likes" component={likeScreen} options={{
+                headerTitle: ''
+            }} />
+             <Stack.Screen name="complete" component={completeScreen} options={{
+               headerShown: false
+            }} />
+             <Stack.Screen name="height" component={heightScreen} options={{
+               headerTitle: ''
+            }} />
+             
+        </Stack.Navigator> 
+    } else {
+        return <View style={{flex: 1, backgroundColor: '#5f1489'}}></View>
+    }
+
 }
 
 
@@ -231,7 +250,7 @@ const TabPage = () => {
             }} />
 
             <Tab.Screen name="dashboard" component={DashboardScreen} options={{
-                    tabBarIcon: ({ color, size }) => <Image style={{ width: 24, height: 24, borderRadius: 10}} source={require('../assets/icons/logo.png')} />,
+                    tabBarIcon: ({ color, size }) => <Image style={{ width: 24, height: 24, borderRadius: 6}} source={require('../assets/icons/logo.png')} />,
                 tabBarLabel: '',
                 
                 }} />

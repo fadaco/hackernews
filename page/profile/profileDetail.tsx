@@ -80,7 +80,7 @@ export default function ProfileDetailScreen({navigation}: any) {
                 <TextTypo title="Plan"/>
                     <TouchableOpacity style={styles.tabContainer}>
                                 <View>
-                                    <TextTypo color="#9E9B9A" title={subscription} />
+                                    <TextTypo color="#3D3735" title={subscription} />
                                 </View>
                         <View>
                         <Avatar.Icon style={{backgroundColor: '#F4F4F4'}} size={24} icon="greater-than" />
@@ -93,7 +93,7 @@ export default function ProfileDetailScreen({navigation}: any) {
                             <TouchableOpacity style={styles.tabContainer} onPress={() => navigation.navigate('identifyAs', {
                                 profile: true
                             })}>
-                        <View><TextTypo color="#9E9B9A" title={identify_as + " (Gender)"} /></View>
+                        <View><TextTypo color="#3D3735" title={identify_as + " (Gender)"} /></View>
                         <View>
                         <Avatar.Icon style={{backgroundColor: '#F4F4F4'}} size={24} icon="greater-than" />
                         </View>
@@ -101,14 +101,14 @@ export default function ProfileDetailScreen({navigation}: any) {
                     <TouchableOpacity style={styles.tabContainer} onPress={() => navigation.navigate('intention', {
                                 profile: true
                             })}>
-                                <View><TextTypo color="#9E9B9A" title={intention || "What are your intention"} />
+                                <View><TextTypo color="#3D3735" title={intention || "What are your intention"} />
                                 </View>
                         <View>
                         <Avatar.Icon style={{backgroundColor: '#F4F4F4'}} size={24} icon="greater-than" />
                         </View>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.tabContainer}>
-                        <View><Text style={{color: '#9E9B9A', fontFamily: 'Averta',}}>Home town</Text></View>
+                        <View><Text style={{color: '#3D3735', fontFamily: 'Averta',}}>Home town</Text></View>
                         <View>
                         <Avatar.Icon style={{backgroundColor: '#F4F4F4'}} size={24} icon="greater-than" />
                         </View>
@@ -122,7 +122,7 @@ export default function ProfileDetailScreen({navigation}: any) {
                             <View style={styles.directions}>
                           
                             <Image source={require('../../assets/icons/height.png')}/>
-                                <TextTypo color="#9E9B9A" ml={10} title={ 'Height ' + height} />
+                                <TextTypo color="#3D3735" ml={10} title={ 'Height ' + height} />
                         </View>
                         <View>
                         <Avatar.Icon style={{backgroundColor: '#F4F4F4'}} size={24} icon="greater-than" />
@@ -133,7 +133,7 @@ export default function ProfileDetailScreen({navigation}: any) {
                     })}>
                         <View style={styles.directions}>
                             <Image source={require('../../assets/icons/workout.png')}/>
-                            <TextTypo color="#9E9B9A" ml={10} title={workout || 'Workout'} />
+                            <TextTypo color="#3D3735" ml={10} title={workout || 'Workout'} />
                         </View>
                         <View>
                         <Avatar.Icon style={{backgroundColor: '#F4F4F4'}} size={24} icon="greater-than" />
@@ -144,7 +144,7 @@ export default function ProfileDetailScreen({navigation}: any) {
                     })}>
                         <View style={styles.directions}>
                             <Image source={require('../../assets/icons/drinking.png')}/>
-                            <TextTypo color="#9E9B9A" ml={10} title={drinking || 'Drinking'} />
+                            <TextTypo color="#3D3735" ml={10} title={drinking || 'Drinking'} />
                         </View>
                         <View>
                         <Avatar.Icon style={{backgroundColor: '#F4F4F4'}} size={24} icon="greater-than" />
@@ -155,7 +155,7 @@ export default function ProfileDetailScreen({navigation}: any) {
                     })}>
                         <View style={styles.directions}>
                             <Image source={require('../../assets/icons/smoking.png')}/>
-                            <TextTypo color="#9E9B9A" ml={10} title={smoking || 'Smoking'} />
+                            <TextTypo color="#3D3735" ml={10} title={smoking || 'Smoking'} />
                         </View>
                         <View>
                         <Avatar.Icon style={{backgroundColor: '#F4F4F4'}} size={24} icon="greater-than" />
@@ -166,7 +166,7 @@ export default function ProfileDetailScreen({navigation}: any) {
                     })}>
                         <View style={styles.directions}>
                             <Image source={require('../../assets/icons/education.png')}/>
-                            <TextTypo color="#9E9B9A" ml={10} title={education || 'Education'} />
+                            <TextTypo color="#3D3735" ml={10} title={education || 'Education'} />
                         </View>
                         <View>
                         <Avatar.Icon style={{backgroundColor: '#F4F4F4'}} size={24} icon="greater-than" />
@@ -177,7 +177,7 @@ export default function ProfileDetailScreen({navigation}: any) {
                     })}>
                         <View style={styles.directions}>
                             <Image source={require('../../assets/icons/search.png')}/>
-                            <TextTypo color="#9E9B9A" ml={10} title={searching_for || 'What are you searching for'} />
+                            <TextTypo color="#3D3735" ml={10} title={searching_for || 'What are you searching for'} />
                         </View>
                         <View>
                         <Avatar.Icon style={{backgroundColor: '#F4F4F4'}} size={24} icon="greater-than" />
@@ -188,7 +188,7 @@ export default function ProfileDetailScreen({navigation}: any) {
                     })}>
                         <View style={styles.directions}>
                         <Image source={require('../../assets/icons/religion.png')}/>
-                        <TextTypo color="#9E9B9A" ml={10} title={religion || 'Religion'} />
+                        <TextTypo color="#3D3735" ml={10} title={religion || 'Religion'} />
                             </View>
                         <View>
                         <Avatar.Icon style={{backgroundColor: '#F4F4F4'}} size={24} icon="greater-than" />

@@ -1,13 +1,14 @@
-import { CREATE_USER, ActionType, AUTH_USER, SET_USER_VALUE, SET_LOGIN_IN, SET_USER_TABLE} from '../type';
+import { CREATE_USER, ActionType, AUTH_USER, SET_USER_VALUE, SET_LOGIN_IN, SET_USER_TABLE, OPEN_ACTION_SHEET} from '../type';
 
 const INIT_VALUES = {
     data: {
         email: '',
         full_name: ''
     },
-    isLoggedIn: false,
+    isLoggedIn: 0,
     status: null,
-    message: ''
+    message: '',
+    actionSheet: false
 
 }
 

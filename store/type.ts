@@ -8,7 +8,7 @@ export type User = {
     sports?: string[]
     percentage_completed?: number
     age?: number
-    date_of_birth?: string
+    date_of_birth?: string | undefined
     describe_yourself?: string
     drinking?: string
     education?: string
@@ -22,7 +22,13 @@ export type User = {
     about_me?: string
     socket_id?: string
     subscription?: string
-    
+    religion?: string
+    searching_for?: string
+    address?: string
+    user_address?: string
+    is_block?: boolean
+    swipe_count?: number
+    last_swipe_count_date?: string
 }
 
 export type Image = {
@@ -35,6 +41,7 @@ export type SetUpUserProfile = {
     type: string,
     name: any,
 }
+
 
 export type ActionType = {
     type: string
@@ -97,3 +104,7 @@ export const USER_CHAT = 'USER_CHAT';
 export const USER_MESSAGE = 'USER_MESSAGE';
 export const USER_CONVERSATION = 'USER_CONVERSATION';
 export const USER_LIKES = 'USER_LIKES';
+export const OPEN_ACTION_SHEET = 'OPEN_ACTION_SHEET';
+
+export const RELOAD_ALL_PAGE = 'RELOAD_ALL_PAGE';
+export const CLEAR_USER_CHAT = 'CLEAR_USER_CHAT';

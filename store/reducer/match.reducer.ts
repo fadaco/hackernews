@@ -1,4 +1,4 @@
-import { LIST_USER, ActionType, USER_MATCH, USER_CHAT, USER_MESSAGE, USER_CONVERSATION, USER_LIKES } from "../type";
+import { LIST_USER, ActionType, USER_MATCH, OPEN_ACTION_SHEET, USER_CHAT, USER_MESSAGE, USER_CONVERSATION, USER_LIKES, RELOAD_ALL_PAGE, CLEAR_USER_CHAT } from "../type";
 
 const INIT_VALUES = {
     matches: [],
@@ -7,7 +7,12 @@ const INIT_VALUES = {
     user_chat: {},
     user_message: [],
     conversation_list: [],
-    user_likes: []
+    user_likes: [],
+    actionSheet: false,
+    reload: false,
+    user_send_message: {
+        _id: ''
+    }
 }
 
 const MatchReducer = (state = INIT_VALUES, action: ActionType) => {
@@ -22,16 +27,28 @@ const MatchReducer = (state = INIT_VALUES, action: ActionType) => {
                 ...state,
                 user_chat: {...action.payload}
             }
+        case RELOAD_ALL_PAGE:
+            return {
+                ...state,
+                reload: !state.reload
+            }
+        case CLEAR_USER_CHAT:
+            return {
+                ...state,
+                user_send_message: {
+                    _id: ''
+                }
+            }
+        case OPEN_ACTION_SHEET:
+                return {
+                    ...state,
+                   actionSheet: action.payload
+                }
         case USER_MESSAGE:
             return {
                 ...state,
-                user_message: [...state.user_message, {
-                    _id: Math.floor(Math.random() * 10000),
-                    text: action.payload.text,
-                    createdAt: new Date(),
-                    user: {
-                      _id: action.payload.senderId,
-                    }}]
+                user_message: [...state.user_message, action.payload],
+                user_send_message: action.payload
             }
         case USER_LIKES:
             return {
@@ -44,7 +61,6 @@ const MatchReducer = (state = INIT_VALUES, action: ActionType) => {
                 conversation_list: [...action.payload]
             }
         case LIST_USER:
-            console.log(action.payload)
             return {
                 ...state,
                 userList: [...action.payload]

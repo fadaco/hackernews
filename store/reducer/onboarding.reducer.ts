@@ -21,7 +21,12 @@ const INIT_VALUES: User = {
     smoking: '',
     workout: '',
     about_me: '',
-    subscription: ''
+    subscription: '',
+    address: '',
+    user_address: '',
+    is_block: false,
+    swipe_count: 0,
+    last_swipe_count_date: ''
 }
 
 const OnBoardingReducer = (state = INIT_VALUES, action: ActionType) => {

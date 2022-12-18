@@ -1,9 +1,9 @@
 import { Text } from 'react-native-paper';
 
 
-export default function TextTypo({title, size, mh, color, mb, fw, ta, mv, mt, ml}: any) { 
+export default function TextTypo({fontFamily = 'Averta', title, size, mh, color, mb, fw, ta, mv, mt, ml}: any) { 
     return <Text style={{
-        fontFamily: 'Averta',
+        fontFamily: fontFamily,
         fontSize: size,
         marginHorizontal: mh,
         marginBottom: mb,

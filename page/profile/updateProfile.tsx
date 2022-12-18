@@ -60,13 +60,11 @@ export default function UpdateProfileScreen({ route }: any) {
 
     const handleSelectValue = (value: string, index: number) => {
         let tmp = [...values]
-        console.log(tmp)
         const arrayIndex = tmp.findIndex((vt) => vt.type === myd[index].name);
         if (arrayIndex >= 0) {
             tmp[arrayIndex].name = value;
             setValues(tmp)
         } else {
-            console.log('new')
             setValues(val => [...val, { type: myd[index].name, name: value }])
         }
     }
