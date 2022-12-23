@@ -1,0 +1,86 @@
+import { useState, useEffect} from 'react';
+import SafeAreaView from 'react-native-safe-area-view';
+import { View, StyleSheet, FlatList } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux'
+import {dispatchUserDetailToStore} from '../store/actions/onboarding.actions'
+import { Checkbox, Snackbar } from 'react-native-paper';
+import TextTypo from './textTypo';
+import { INTERESTS } from '../data';
+import Footer from './footer';
+import { setUpProfile } from '../store/actions/onboarding.actions';
+
+
+export default function InterestFieldScreen({ route, navigation }: any) {
+  const { interests } = useSelector((state: any) => state.onboarding);
+  const [loading, setIsLoading] = useState<boolean>(false);
+  const [categories, setCategories] = useState<string[]>(INTERESTS)
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(interests.length > 0 ? interests : []);
+  const dispatch: any = useDispatch();
+  const [message, setMessage] = useState<string>('')
+  const profile = route?.params?.profile;
+
+  useEffect(() => {
+    dispatch(dispatchUserDetailToStore({interests: selectedCategories}))
+  }, [selectedCategories.length])
+  
+  const handleCheckedItem = (item: string) => {
+    if (selectedCategories.includes(item)) {
+      setSelectedCategories(selectedCategories.filter(sl => sl !== item))
+    } else {
+      if (selectedCategories.length < 5) {
+       setSelectedCategories((items) => [...items, item])
+      } else {
+        setMessage('You can only select 5 interests')
+      }
+    }
+  }
+
+
+  return (
+    <SafeAreaView style={[styles.container, {padding: profile ? 20 : 0}]}>
+      <TextTypo fw="bold" size={25} mv={15} title="Choose up to 5 interests" />
+      <FlatList
+         keyExtractor={(item, index) => index.toString()}      
+        numColumns={3} data={categories.slice(0, 6)}
+        renderItem={({ item, index }) => (
+          <View key={index} style={styles.selectContainer}>
+          <TextTypo title={item}/>
+          <Checkbox  status={selectedCategories.includes(item) ? 'checked' : 'unchecked'} onPress={() => handleCheckedItem(item)} />
+          </View>
+      )}
+      />
+      <Snackbar style={styles.snackbar} visible={message !== ''} onDismiss={() => setMessage('')}>{message}</Snackbar> 
+      {profile ? <Footer loading={loading} title="Update" submitData={async () => {
+        setIsLoading(true)
+        await setUpProfile({
+          type: 'interests',
+          name: selectedCategories
+        })
+        setIsLoading(false)
+      }} /> : <></>}
+   
+    </SafeAreaView>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+      textAlign: 'center'
+  },
+  selectContainer: {
+    backgroundColor: '#F4F3F3',
+    float: 'right',
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
+    margin: 10,
+    width: 97,
+    height: 97
+  },
+  snackbar: {
+    marginTop: 100
+  }
+  });

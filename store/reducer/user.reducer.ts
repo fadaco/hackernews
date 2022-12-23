@@ -1,13 +1,15 @@
-import {UserData, CREATE_USER, ActionType, AUTH_USER, SET_USER_VALUE, SET_LOGIN_IN, SET_USER_TABLE} from '../type';
+import { CREATE_USER, ActionType, AUTH_USER, SET_USER_VALUE, SET_LOGIN_IN, SET_USER_TABLE, OPEN_ACTION_SHEET} from '../type';
 
-const INIT_VALUES: UserData = {
-    user: {
+const INIT_VALUES = {
+    data: {
         email: '',
-        password: '',
         full_name: ''
     },
-    isLoggedIn: false,
-    db: null
+    isLoggedIn: 0,
+    status: null,
+    message: '',
+    actionSheet: false
+
 }
 
 const UserReducer = (state = INIT_VALUES, action: ActionType) => {
@@ -33,11 +35,10 @@ const UserReducer = (state = INIT_VALUES, action: ActionType) => {
                     db: action.payload
             }
         case SET_USER_VALUE:
-            console.log(action.payload)
             return {
                 ...state,
                 user: {
-                    ...state.user,
+                    ...state.data,
                     email: action.payload.Email,
                     full_name: action.payload.NAME,
                 }
