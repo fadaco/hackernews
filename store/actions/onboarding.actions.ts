@@ -58,6 +58,5 @@ export const goToDashboard = (value: number) =>async (dispatch: Dispatch) => {
 export const getUser = () => async (dispatch: Dispatch) => {
     const response = await SERVER_REQUEST(USER, 'get');
     const { data } = response;
-    console.log(data);
     dispatch({type: USER_DETAIL, payload: data})
 }

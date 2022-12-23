@@ -34,7 +34,7 @@ export default function UserLikeScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'rgba(95, 20, 137, 0.7)'
+        backgroundColor: 'rgba(95, 20, 137, 0.9)'
     },
     header: {
         marginBottom: 50,

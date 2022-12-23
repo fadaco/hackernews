@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
-import { View, StyleSheet, Image, ScrollView } from 'react-native';
+import { View, StyleSheet,Image, ScrollView } from 'react-native';
+//import {Image} from "react-native-expo-image-cache";
 import SafeAreaView from 'react-native-safe-area-view';
 import { useFocusEffect } from '@react-navigation/native';
 import SettingList from '../../components/settingList';
@@ -123,7 +124,7 @@ export default function ProfileScreen({navigation}: any) {
           </View>
         </ScrollView>
         <View style={{paddingHorizontal: 25}}>
-        <Button style={styles.button} labelStyle={{ fontFamily: 'Averta'}}  mode="contained">Continue</Button>
+        <Button style={styles.button} labelStyle={{ fontFamily: 'Averta'}}  mode="contained">Upgrade Plan</Button>
           </View>
           </SafeAreaView>
     )

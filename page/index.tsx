@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import * as Notifications from 'expo-notifications';
 import DashboardScreen from './dashboard';
 import { getUser } from '../store/actions/onboarding.actions';
 import { getUserMatches, getConversations, getLikes } from '../store/actions/match.actions';
@@ -39,6 +40,7 @@ import socket from '../shared/socket';
 import jwt_decode from "jwt-decode";
 import TextTypo from '../components/textTypo';
 import { EMPTY_URL, PLACEHOLDER_IMAGE, URL } from '../config';
+import { useNotifications } from '../shared/useNotifications';
 
 
 const Stack = createNativeStackNavigator();
@@ -53,6 +55,7 @@ export default function Home() {
     const [isProfileCompleted, setIsProfileCompleted] = useState<number>(0)
     const [isConnected, setIsConnected] = useState(socket.connected);
     const dispatch: any = useDispatch();
+    const { registerForPushNotificationsAsync, handleNotificationResponse } = useNotifications();
 
     
     socket.on('connect', () => {
@@ -103,6 +106,25 @@ export default function Home() {
             console.log(e)
         }
     }, [isLoggedIn, isProfileCompleted, reload])
+
+    useEffect(() => {
+        registerForPushNotificationsAsync();
+        Notifications.setNotificationHandler({
+            handleNotification: async () => ({
+              shouldShowAlert: true,
+              shouldPlaySound: false,
+              shouldSetBadge: true,
+            }),
+        });
+        
+        const responseListener = Notifications.addNotificationResponseReceivedListener(handleNotificationResponse);
+
+        return () => {
+            if (responseListener)
+                Notifications.removeNotificationSubscription(responseListener);
+        }
+
+    }, [])
 
     if ((isLoggedIn === 2 || isProfileCompleted === 2)) {
         return  <Stack.Navigator>

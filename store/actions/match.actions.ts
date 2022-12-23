@@ -1,5 +1,5 @@
 import { Dispatch } from 'redux';
-import { SERVER_REQUEST, USER_LIST, USER_MATCHES, CONVERSATIONS, LIKES, BLOCK_USER, UNMATCH_USER } from '../../config';
+import { SERVER_REQUEST, USER_LIST, USER_MATCHES, CONVERSATIONS, LIKES, BLOCK_USER, UNMATCH_USER, SAVE_PUSH_NOTIFICATION_TOKEN } from '../../config';
 import { UserList, LIST_USER, USER_MATCH, User, USER_CHAT, USER_CONVERSATION, USER_LIKES, RELOAD_ALL_PAGE, CLEAR_USER_CHAT } from '../type';
 
 export const getUserList = (payload:UserList) => async (dispatch: Dispatch) =>  {
@@ -42,6 +42,11 @@ export const blockUser = async (id: string) => {
 
 export const unMatchUser = async (id: string) => {
     const response = await SERVER_REQUEST(UNMATCH_USER(id), 'get');
+    return response;
+}
+
+export const saveNotificationToken = async (data: any) => {
+    const response = await SERVER_REQUEST(SAVE_PUSH_NOTIFICATION_TOKEN, 'post', data);
     return response;
 }
 

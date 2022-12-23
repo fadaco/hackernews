@@ -47,7 +47,7 @@ export default function Chatcreen({ route,itemId, navigation }:any) {
             senderId: user?._id,
             receiverId: user_chat._id,
             fullname: user_chat.full_name,
-            deviceId: 3,
+            deviceId: user_chat?.deviceId,
             text: text,
             read: false,
             createdAt: createdAt,

@@ -5,6 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "scheme": "com.fadaco.krossbirds",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -20,14 +21,15 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.fadaco.krossbirds",
-      "buildNumber": "7"
+      "buildNumber": "10"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.fadaco.krossbirds"
+      "package": "com.fadaco.krossbirds",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -36,6 +38,8 @@
       "eas": {
         "projectId": "76a9351f-4cc7-4674-b20b-3b9c57230509"
       }
-    }
+    },
+    "plugins": [
+    ]
   }
 }

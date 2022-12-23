@@ -29,6 +29,7 @@ export type User = {
     is_block?: boolean
     swipe_count?: number
     last_swipe_count_date?: string
+    deviceId: string
 }
 
 export type Image = {

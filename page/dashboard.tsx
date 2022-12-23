@@ -96,9 +96,7 @@ export default function Dashboard({ navigation }: any) {
     } catch (e) {
       console.log(e)
        }
-    console.log('swipe count ', swipe_count);
-    console.log(' image ', images);
-    console.log('id ', _id);
+
 
   }, [text])
 
@@ -127,10 +125,10 @@ export default function Dashboard({ navigation }: any) {
       {matchFound ?
         <SafeAreaView style={styles.swipeMatchContainer}>
             <View style={styles.imageSwipeContainer}>
-              <Image style={[styles.imageSwipe, {left: -50}]} source={{uri: (URL + '' + images[0]?.image) || EMPTY_URL}} />
+              <Image defaultSource={{ uri: PLACEHOLDER_IMAGE }} style={[styles.imageSwipe, {left: -50}]} source={{uri: (URL + '' + images[0]?.image) || EMPTY_URL}} />
               <Image style={styles.matchIcon} source={require('../assets/icons/match-icon.png')} />
               <Image style={styles.matchIcons} source={require('../assets/icons/match-icons.png')}/>
-            <Image style={[styles.imageSwipe, { left: 10 }]} source={{
+            <Image defaultSource={{ uri: PLACEHOLDER_IMAGE }} style={[styles.imageSwipe, { left: 10 }]} source={{
               uri: (URL + '' + swipedImage) || EMPTY_URL
             }} />
             </View>
@@ -235,7 +233,7 @@ export default function Dashboard({ navigation }: any) {
                   receiverId: userList[index]._id,
                   type: 'like',
                   socket_id: socket_id,
-                  swipe_count: userDailySwipeCount
+                  swipe_count: userDailySwipeCount,
                 })
                 }
                 setUserDailySwipeCount(userDailySwipeCount - 1)
@@ -434,8 +432,8 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   logo: {
-    width: 200,
-    height: 50,
+    width: 140,
+    height: 40,
     backgroundColor: 'rgba(255, 255, 255, 0.73)',
     position: 'relative',
     zIndex: 999999,
