@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { FlatList, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
+import CachedImage from '../components/cachedImage';
 import { useFocusEffect } from '@react-navigation/native';
 import {  getConversations, getLikes, getUserMatches, clearChatField } from '../store/actions/match.actions';
 import TextTypo from '../components/textTypo';
@@ -42,17 +43,13 @@ export default function MatchScreen({ navigation }: any) {
                             data: item
                         })
                     }} key={index} style={styles.imageContainer}>
-                        <Image style={styles.image} defaultSource={{uri: PLACEHOLDER_IMAGE}} source={{
-                            uri: item.images.length ? URL + '' + item.images[0].image : EMPTY_URL
-                        }} />
+                        <CachedImage style={styles.image} url={URL + '' + item.images[0].image} />
                      </TouchableOpacity>
                 )}
                 />
                 </View>
             <TextTypo size={18} color="#251E1C" mt={20} title="Chats" />
-            
-            {/* <View style={{flex: 1}}> */}
-            
+                        
             <FlatList
                 keyExtractor={(item, index) => index.toString()}  
                 data={conversation_list}
@@ -66,9 +63,7 @@ export default function MatchScreen({ navigation }: any) {
                     }}>
                             <View style={{flexDirection: 'row'}}>
                                 <View key={index} style={styles.imageContainerChat}>
-                                <Image style={styles.imageChat} defaultSource={{uri: PLACEHOLDER_IMAGE}} source={{
-                                        uri:  URL + '' + item.images[0].image || PLACEHOLDER_IMAGE
-                                    }} />
+                                <CachedImage style={styles.imageChat} url={URL + '' + item.images[0].image} />
                                 </View>
                                 <View>
                                     <TextTypo fw="bold" mb={15} title={item.full_name} />

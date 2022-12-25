@@ -27,7 +27,7 @@ export default function PhotoScreen({ route, navigation }: any) {
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [3, 3],
-        quality: 1,
+        quality: 0.5,
       });     
       if (!result.canceled && (result.assets[0]?.uri?.toLowerCase().endsWith('jpg') || result.assets[0].uri?.toLowerCase()?.endsWith('heif') || result.assets[0].uri?.toLowerCase()?.endsWith('hei') || result.assets[0].uri?.toLowerCase()?.endsWith('png') || result.assets[0].uri?.toLowerCase()?.endsWith('heic') || result.assets[0]?.uri?.toLowerCase().endsWith('jpeg'))) {
         setIsUploading(true);
@@ -52,7 +52,6 @@ export default function PhotoScreen({ route, navigation }: any) {
       console.log(error)    
     }
   };
-
 
   return (
     <SafeAreaView style={styles.container}>

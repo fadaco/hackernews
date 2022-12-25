@@ -16,6 +16,7 @@ export const RESEND_OTP = '/resend-otp';
 export const SETUP_PROFILE = '/setup-profile';
 export const UPLOAD_IMAGE_PROFILE = '/upload-image';
 export const USER = '/user';
+export const UPGRADE_SUBSCRIPTION_PLAN = '/upgrade-plan';
 export const USER_LIST = '/user-list';
 export const USER_MATCHES = '/user-match';
 export const CONVERSATIONS = '/conversations';
@@ -74,6 +75,16 @@ export const SERVER_REQUEST = async (url: string, type: string, body: any = null
     }
 }
 
+export const CONVERT_IMAGE_TO_BASE64 = async (data: string) => {
+  try {
+    const base64 = await FileSystem.readAsStringAsync("https://www.lindaikejisblog.com/photos/shares/thumbs/63a74bc5d159a.PNG", { encoding: 'base64' });
+    console.log(base64)
+  } catch (e) {
+    console.log(e)
+  }
+ 
+
+}
 
 export const FONT_CONFIG = {
     web: {

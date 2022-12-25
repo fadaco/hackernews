@@ -1,6 +1,6 @@
 import { Dispatch } from 'redux';
-import { SERVER_REQUEST, USER_LIST, USER_MATCHES, CONVERSATIONS, LIKES, BLOCK_USER, UNMATCH_USER, SAVE_PUSH_NOTIFICATION_TOKEN } from '../../config';
-import { UserList, LIST_USER, USER_MATCH, User, USER_CHAT, USER_CONVERSATION, USER_LIKES, RELOAD_ALL_PAGE, CLEAR_USER_CHAT } from '../type';
+import { SERVER_REQUEST, USER_LIST, USER_MATCHES, CONVERSATIONS, LIKES, BLOCK_USER, UNMATCH_USER, SAVE_PUSH_NOTIFICATION_TOKEN, UPGRADE_SUBSCRIPTION_PLAN } from '../../config';
+import { UserList, LIST_USER, USER_MATCH, User, USER_CHAT, USER_CONVERSATION, USER_LIKES, RELOAD_ALL_PAGE, CLEAR_USER_CHAT, UPGRADE_PLAN } from '../type';
 
 export const getUserList = (payload:UserList) => async (dispatch: Dispatch) =>  {
     const response = await SERVER_REQUEST(USER_LIST, 'post', payload);
@@ -47,6 +47,12 @@ export const unMatchUser = async (id: string) => {
 
 export const saveNotificationToken = async (data: any) => {
     const response = await SERVER_REQUEST(SAVE_PUSH_NOTIFICATION_TOKEN, 'post', data);
+    return response;
+}
+
+export const upgradeSubscriptionPlan = async (data: any) => {
+    const response = await SERVER_REQUEST(UPGRADE_SUBSCRIPTION_PLAN, 'post', data);
+    console.log(response);
     return response;
 }
 

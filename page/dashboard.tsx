@@ -247,7 +247,7 @@ export default function Dashboard({ navigation }: any) {
               showSecondCard={true}
               cardIndex={0}
               stackSize={5}
-              verticalSwipe={false}
+            ///  verticalSwipe={false}
               backgroundColor={'transparent'}
               // stackSize={1}
                 ref={(swiper) => {
