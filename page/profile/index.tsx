@@ -84,13 +84,7 @@ export default function ProfileScreen({navigation}: any) {
           ))}
           </View>
           </View>
-          <StripeProvider
-      publishableKey="pk_test_51MIcL0LjQXh9ZYRptYohMsf9d4CzOpR8vE04FB0mk1FSvLJ8ow2nMNPr5hxYkMvXmKTfkPeoDetschIDMZME7eqa006e6dNYUQ"
-      urlScheme="your-url-scheme" // required for 3D Secure and bank redirects
-      merchantIdentifier="merchant.com.{{YOUR_APP_NAME}}" // required for Apple Pay
-    >
-      <TextTypo title="pay"/>
-    </StripeProvider>
+         
               <View>
             <TextTypo size={16} fw="bold" mt={50} title="My subscription plan" />
             <Picker

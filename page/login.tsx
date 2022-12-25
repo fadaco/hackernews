@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import SafeAreaView from 'react-native-safe-area-view';
 import TextTypo from '../components/textTypo';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useDispatch } from 'react-redux'
 import { loggedInWithEmailAndPhoneNumber, dispatchUserDetailToStore } from '../store/actions/onboarding.actions';
 import { TextInput, Snackbar } from 'react-native-paper';
@@ -28,6 +28,8 @@ export default function Login({navigation}: any) {
  
   return (
     <SafeAreaView style={styles.container}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <>
       <TextTypo fw="bold" size={25} mb={20} title="Kindly provide the following"/>
       <View>
         <TextInput
@@ -56,7 +58,9 @@ export default function Login({navigation}: any) {
           setMessage(response.message);
         }
         setLoading(false)
-      }} />
+          }} />
+          </>
+        </TouchableWithoutFeedback>
       </SafeAreaView>
     )
 };
