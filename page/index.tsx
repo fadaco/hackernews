@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { TouchableOpacity, Text, Image, View, Button } from 'react-native';
+import { TouchableOpacity, Text, Image, View, Button, TouchableWithoutFeedback } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import * as Notifications from 'expo-notifications';
 import DashboardScreen from './dashboard';
+import CachedImage from '../components/cachedImage';
 import { getUser } from '../store/actions/onboarding.actions';
 import { getUserMatches, getConversations, getLikes } from '../store/actions/match.actions';
 import profileScreen from './profile';
@@ -13,7 +14,7 @@ import landingScreen from './landing';
 import { IconButton, Badge } from 'react-native-paper';
 import loginScreen from './login';
 import { dispatchUserDetailToStore, dispatchChatToStore } from '../store/actions/onboarding.actions';
-import { openActionSheetModal } from '../store/actions/user.actions';
+import { openActionSheetModal, openProfileModal } from '../store/actions/user.actions';
 import otpScreen from './onboarding/otp';
 import nameScreen from './onboarding/name';
 import dobScreen from './onboarding/dob';
@@ -129,13 +130,11 @@ export default function Home() {
     if ((isLoggedIn === 2 || isProfileCompleted === 2)) {
         return  <Stack.Navigator>
         <Stack.Screen name="landingHome" component={TabPage} options={{ headerShown: false }} />
-        <Stack.Screen name="chat" component={chatcreen} options={{
-            headerTitle: (props) => <View style={{ flexDirection: 'row' }}>
-                <Image defaultSource={{
-                    uri: PLACEHOLDER_IMAGE
-                
-                }} style={{ height: 40, width: 40, borderRadius: 50, marginRight: 5 }} source={{ uri: URL + '' + user_chat.images[0].image }} />
+            <Stack.Screen name="chat" component={chatcreen} options={({ navigation }) => ({
+                headerTitle: (props) => <TouchableOpacity onPress={() => dispatch(openProfileModal(true))} style={{ flexDirection: 'row' }}>
+                <CachedImage style={{ height: 40, width: 40, borderRadius: 50, marginRight: 5 }} url={URL + '' + user_chat.images[0].image } />
                 <View>
+                    
                     <TextTypo title={user_chat.full_name} mt={4} ta="center" />
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <View style={{ backgroundColor: connectedUser[user_chat._id] ? 'green' : 'red', height: 10, width: 10, borderRadius: 50, borderWidth: 2, borderColor: '#ffffff' }} />
@@ -143,11 +142,15 @@ export default function Home() {
 
                     </View>
                 </View>
-            </View>,
+            </TouchableOpacity>,
             headerRight: (props) => (<IconButton onPress={() => dispatch(openActionSheetModal(true))} style={{ backgroundColor: 'none' }} size={20} iconColor="#5f1489" icon="dots-vertical" />),
-            headerBackTitle: '',
-            
-        }} initialParams={{ itemId: 42 }} />
+                headerLeft: (props) => (<TouchableWithoutFeedback onPress={() => {
+                    dispatch(openProfileModal(false))
+                    navigation.navigate('user')
+            }}>
+                <Image source={require('../assets/icons/back.png')}/>
+            </TouchableWithoutFeedback>),
+        })} initialParams={{ itemId: 42 }} />
 
         <Stack.Screen name="profileDetail" component={profileDetailScreen} options={{
             headerTitle: '',

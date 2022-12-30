@@ -27,7 +27,9 @@ const INIT_VALUES: User = {
     is_block: false,
     swipe_count: 0,
     last_swipe_count_date: '',
-    deviceId:''
+    deviceId: '',
+    notification: true,
+    incognito: false
 }
 
 const OnBoardingReducer = (state = INIT_VALUES, action: ActionType) => {

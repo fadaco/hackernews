@@ -52,7 +52,6 @@ export const saveNotificationToken = async (data: any) => {
 
 export const upgradeSubscriptionPlan = async (data: any) => {
     const response = await SERVER_REQUEST(UPGRADE_SUBSCRIPTION_PLAN, 'post', data);
-    console.log(response);
     return response;
 }
 

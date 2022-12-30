@@ -1,27 +1,28 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
-import { Avatar} from 'react-native-paper';
+import { Avatar, Modal, Chip} from 'react-native-paper';
 import { Actions, ActionsProps, GiftedChat, IMessage } from 'react-native-gifted-chat'
 import * as ImagePicker from 'expo-image-picker';
 import { useDispatch, useSelector } from 'react-redux';
-import { openActionSheetModal } from '../store/actions/user.actions';
+import { openActionSheetModal, openProfileModal } from '../store/actions/user.actions';
 import { blockUser, unMatchUser, getConversations } from '../store/actions/match.actions';
 import socket from '../shared/socket';
 import {Message } from '../store/type';
 import ActionSheet, {ActionSheetRef} from "react-native-actions-sheet";
 import TextTypo from '../components/textTypo';
 import uuid from 'react-native-uuid';
-import { EMPTY_URL } from '../config';
+import { EMPTY_URL, URL } from '../config';
+import CachedImage from '../components/cachedImage';
 
 export default function Chatcreen({ route,itemId, navigation }:any) {
     const { chats } = route.params
     const [messages, setMessages] = useState<IMessage[]>([]);
     const { _id, full_name, images } = useSelector((state: any) => state.onboarding);
     const actionSheetRef = useRef<ActionSheetRef>(null);
-    const { user_chat, user_message, actionSheet, user_send_message} = useSelector((state: any) => state.match);
+    const { user_chat, user_message, actionSheet, user_send_message, profileModal} = useSelector((state: any) => state.match);
     const dispatch: any = useDispatch();
-
+console.log(user_chat)
     useEffect(() => {
         dispatch(getConversations());
         setMessages([]);  
@@ -103,6 +104,48 @@ export default function Chatcreen({ route,itemId, navigation }:any) {
                 }}
                 messageIdGenerator={() => String(uuid.v4())}
             />
+            
+            <Modal visible={profileModal} onDismiss={() => dispatch(openProfileModal(false))} contentContainerStyle={styles.modal}>
+                <ScrollView style={{width: '100%'}}>
+                    <View style={{width: '100%', height: 400}}>
+                        <CachedImage style={{ width: '100%', height: '100%' }} url={URL + user_chat.images[0].image} />
+                    </View>
+                    <View style={{padding: 20}}>
+                        <TextTypo fontFamily="Averta Bold" size={25} title={user_chat.full_name} />
+                        <TextTypo mt={15} ml={10} title="Interests" />
+                        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                            {user_chat.interests?.map((interest:string, index:number) => (
+                                <Chip key={index} compact style={{margin: 4}}>
+                                <TextTypo title={ interest} />
+                                </Chip>
+                            ))}
+                            
+                        </View>
+                       
+                    </View>
+                    <View>
+                        
+                        {user_chat.images.length > 1 ? user_chat.images.slice(1).map((image: any, index: number) => (
+                         <View key={index} style={{width: '100%', height: 400, marginVertical: 5}}>
+                                <CachedImage  style={{ width: '100%', height: '100%' }} url={URL + image.image} />
+                                </View>
+                            )) : <></>}
+                        <View style={{ padding: 20 }}>
+                        <TextTypo mt={15} ml={10} title="Sports" />
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                  {user_chat.sports?.map((sport:string, index:number) => (
+                      <Chip key={index} compact style={{margin: 4}}>
+                      <TextTypo title={ sport} />
+                      </Chip>
+                  ))}
+           
+                </View>
+                       </View>
+                    </View>
+
+                  </ScrollView>
+                </Modal>
+               
              <ActionSheet ref={actionSheetRef} containerStyle={styles.actionsheet} onClose={() =>  dispatch(openActionSheetModal(false))}>
                 <TouchableOpacity onPress={async () => {
                     const response = await unMatchUser(user_chat._id)
@@ -119,7 +162,7 @@ export default function Chatcreen({ route,itemId, navigation }:any) {
                     if (response.status) {
                         actionSheetRef.current?.hide()
                         dispatch(getConversations())
-                        navigation.goBack()
+                        navigation.navigate('user')
                     }
                 }}>
                     <TextTypo size={16} color="#6E6968" fontFamily="Averta Bold" title="Block User" /> 
@@ -138,4 +181,10 @@ const styles = StyleSheet.create({
         height: '20%',
         padding: 20
     },
+    modal: {
+        backgroundColor: '#ffffff',
+        marginHorizontal: 20,
+        borderRadius: 8,
+        overflow: 'hidden'
+    }
 })

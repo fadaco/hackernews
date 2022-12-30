@@ -30,6 +30,8 @@ export type User = {
     swipe_count?: number
     last_swipe_count_date?: string
     deviceId?: string
+    notification?: boolean
+    incognito?: boolean
 }
 
 export type Image = {
@@ -106,6 +108,7 @@ export const USER_MESSAGE = 'USER_MESSAGE';
 export const USER_CONVERSATION = 'USER_CONVERSATION';
 export const USER_LIKES = 'USER_LIKES';
 export const OPEN_ACTION_SHEET = 'OPEN_ACTION_SHEET';
+export const OPEN_USER_PROFILE = 'OPEN_USER_PROFILE';
 
 export const RELOAD_ALL_PAGE = 'RELOAD_ALL_PAGE';
 export const CLEAR_USER_CHAT = 'CLEAR_USER_CHAT';

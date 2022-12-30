@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import SafeAreaView from 'react-native-safe-area-view';
 import TextTypo from "../../components/textTypo";
 import { Avatar, Button, Switch } from "react-native-paper";
-import { setUpProfile, goToDashboard } from "../../store/actions/onboarding.actions";
+import { setUpProfile, goToDashboard, deleteAccount } from "../../store/actions/onboarding.actions";
 import { useDispatch, useSelector } from "react-redux";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function SettingScreen({ route, navigation }: any) { 
-    const { is_block } = useSelector((state: any) => state.onboarding);
+    const { is_block, notification, incognito } = useSelector((state: any) => state.onboarding);
     const [isSwitchOn, setIsSwitchOn] = useState<boolean>(is_block);
-    const dispatch:any = useDispatch();
+    const dispatch: any = useDispatch();
+    const [onNotification, setONNotification] = useState(false)
     const onToggleSwitch = async() => {
             await setUpProfile({
                 type: 'is_block',
@@ -47,22 +48,39 @@ export default function SettingScreen({ route, navigation }: any) {
                             <TextTypo color="#3D3735" title={'Notifications'} />
                         </View>
                         <View>
-                        <Avatar.Icon style={{backgroundColor: '#F4F4F4'}} size={24} icon="greater-than" />
+                        <Switch value={onNotification} onValueChange={() => setONNotification(!onNotification)} />
                         </View>
                 </TouchableOpacity>
                 
-                <TouchableOpacity style={styles.tabContainer}>
+                {/* <TouchableOpacity style={styles.tabContainer}>
                         <View>
                             <TextTypo color="#3D3735" title={'Security & Privacy'} />
                         </View>
                         <View>
                         <Avatar.Icon style={{backgroundColor: '#F4F4F4'}} size={24} icon="greater-than" />
                         </View>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
             </View>
             
             <View style={{flex: 1, justifyContent: 'flex-end'}}>
-                <Button style={styles.button} labelStyle={styles.buttonText} mode="contained">Delete account</Button>
+                <Button onPress={() => Alert.alert('Are you sure?', 'This action is irrevisible', [{
+                    text: 'Cancel',
+                }, {
+                    text: 'Delete',
+                    onPress: async () => {
+                        console.log('jfjfjfjf')
+                        try {
+                            const response = await deleteAccount();
+                            if (response.status) {
+                                await AsyncStorage.clear();
+                                dispatch(goToDashboard(1))
+                            }
+                        } catch (e) {
+                            console.log(e);
+                        }
+                        console.log('mcmmcmcm')
+                    }
+                }])} style={styles.button} labelStyle={styles.buttonText} mode="contained">Delete account</Button>
                 <Button style={styles.button} labelStyle={styles.buttonText2} onPress={async () => {
                     try {
                         await AsyncStorage.clear();

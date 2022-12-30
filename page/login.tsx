@@ -28,7 +28,7 @@ export default function Login({navigation}: any) {
  
   return (
     <SafeAreaView style={styles.container}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <>
       <TextTypo fw="bold" size={25} mb={20} title="Kindly provide the following"/>
       <View>

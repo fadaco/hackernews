@@ -1,4 +1,4 @@
-import { SET_LOGIN_IN, SET_USER_TABLE, SET_USER_VALUE, OPEN_ACTION_SHEET } from '../type';
+import { SET_LOGIN_IN, SET_USER_TABLE, SET_USER_VALUE, OPEN_ACTION_SHEET, OPEN_USER_PROFILE } from '../type';
 import { Dispatch } from 'redux';
 
 
@@ -16,5 +16,9 @@ export const setUserValue = (data: any) => async (dispatch: Dispatch) => {
 
 export const openActionSheetModal = (value: boolean) => (dispatch: Dispatch) => {
      dispatch({ type: OPEN_ACTION_SHEET, payload: value })
+}
+
+export const openProfileModal = (value: boolean) => (dispatch: Dispatch) => {
+     dispatch({ type: OPEN_USER_PROFILE, payload: value })
 }
 

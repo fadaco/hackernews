@@ -1,6 +1,5 @@
 import { useState, useCallback } from 'react';
 import { View, StyleSheet,Image, ScrollView, Alert} from 'react-native';
-//import {Image} from "react-native-expo-image-cache";
 import CachedImage from '../../components/cachedImage';
 import {useStripe, StripeProvider } from '@stripe/stripe-react-native';
 import SafeAreaView from 'react-native-safe-area-view';
@@ -64,15 +63,20 @@ export default function ProfileScreen({navigation}: any) {
   
   useFocusEffect(
     useCallback(() => {
-      dispatch(getUser());
+     dispatch(getUser());
+     // console.log('jdjdjdj')
     }, [])
   );
+
+  const handleImage = () => {
+
+  }
 
     return (
       <SafeAreaView style={styles.container}>
         <ScrollView style={styles.scrollView}>
         <View>
-          <View style={styles.imageContainer}>
+            <View style={styles.imageContainer}>
             <CachedImage style={{width: '100%', height: '100%'}} url={URL + '' + images[0]?.image} />
             </View>
           <TextTypo title={full_name + ', ' + age} size={24} fw="bold" mt={10} ta="center" />

@@ -5,6 +5,7 @@ import { getUserList, dispatchUserDetailToChat, reloadPage } from '../store/acti
 import SafeAreaView from 'react-native-safe-area-view';
 import { Avatar, Chip, Button, Modal } from 'react-native-paper';
 import { User } from '../store/type'
+import CachedImage from '../components/cachedImage';
 import { URL, EMPTY_URL, PLACEHOLDER_IMAGE } from '../config';
 import Swiper from 'react-native-deck-swiper';
 import TextTypo from '../components/textTypo';
@@ -125,12 +126,10 @@ export default function Dashboard({ navigation }: any) {
       {matchFound ?
         <SafeAreaView style={styles.swipeMatchContainer}>
             <View style={styles.imageSwipeContainer}>
-              <Image defaultSource={{ uri: PLACEHOLDER_IMAGE }} style={[styles.imageSwipe, {left: -50}]} source={{uri: (URL + '' + images[0]?.image) || EMPTY_URL}} />
+              <CachedImage  style={[styles.imageSwipe, {left: -50}]} url={URL + '' + images[0]?.image} />
               <Image style={styles.matchIcon} source={require('../assets/icons/match-icon.png')} />
               <Image style={styles.matchIcons} source={require('../assets/icons/match-icons.png')}/>
-            <Image defaultSource={{ uri: PLACEHOLDER_IMAGE }} style={[styles.imageSwipe, { left: 10 }]} source={{
-              uri: (URL + '' + swipedImage) || EMPTY_URL
-            }} />
+            <CachedImage style={[styles.imageSwipe, { left: 10 }]} url={URL + '' + swipedImage} />
             </View>
 
           <TextTypo fw="bold" mt={80} color="#ffffff" size={18} title="Matched!" />
@@ -141,7 +140,8 @@ export default function Dashboard({ navigation }: any) {
                 latitude: '37.785834',
                 longitude: '-122.406417'
               }))
-                        dispatch(dispatchUserDetailToChat(item))
+              dispatch(dispatchUserDetailToChat(item))
+              setMatchFound(false)
                         navigation.navigate('chat', {
                             chats: [],
                             data: item
@@ -242,8 +242,8 @@ export default function Dashboard({ navigation }: any) {
                 setIndexValue(index)
               }}
               // cardStyle={{ borderRadius: 16 }}
-              cardHorizontalMargin={0}
-              cardVerticalMargin={0}
+              cardHorizontalMargin={20}
+              cardVerticalMargin={50}
               showSecondCard={true}
               cardIndex={0}
               stackSize={5}
@@ -414,7 +414,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     alignSelf: 'center',
-    bottom: 100,
+    bottom: 50,
     padding: 20,
     width: '92%',
     height: 80,

@@ -1,4 +1,4 @@
-import { LIST_USER, ActionType, USER_MATCH, OPEN_ACTION_SHEET, USER_CHAT, USER_MESSAGE, USER_CONVERSATION, USER_LIKES, RELOAD_ALL_PAGE, CLEAR_USER_CHAT } from "../type";
+import { LIST_USER, ActionType, USER_MATCH, OPEN_ACTION_SHEET, OPEN_USER_PROFILE, USER_CHAT, USER_MESSAGE, USER_CONVERSATION, USER_LIKES, RELOAD_ALL_PAGE, CLEAR_USER_CHAT } from "../type";
 
 const INIT_VALUES = {
     matches: [],
@@ -9,6 +9,7 @@ const INIT_VALUES = {
     conversation_list: [],
     user_likes: [],
     actionSheet: false,
+    profileModal: false,
     reload: false,
     user_send_message: {
         _id: ''
@@ -44,6 +45,11 @@ const MatchReducer = (state = INIT_VALUES, action: ActionType) => {
                     ...state,
                    actionSheet: action.payload
                 }
+        case OPEN_USER_PROFILE:
+            return {
+                ...state,
+               profileModal: action.payload
+            }
         case USER_MESSAGE:
             return {
                 ...state,
