@@ -177,7 +177,7 @@ export default function Dashboard({ navigation }: any) {
                         <Image defaultSource={{ uri: PLACEHOLDER_IMAGE }} style={{ height: '100%', width: '100%', borderRadius: 16 }} source={{
                           uri: user?.images?.length ? (URL + '' + user.images[0].image) : EMPTY_URL
                         }} />
-                        {user?.full_name ? <View style={{ flexDirection: 'row', width: '50%', position: 'absolute', left: 10, bottom: 200 }}>
+                        {user?.full_name ? <View style={{ flexDirection: 'row', width: '50%', position: 'absolute', left: 10, bottom: 150 }}>
                           <View style={{ marginRight: 6 }}><TextTypo fontFamily="Averta Bold" color="#ffffff" title={user?.full_name + ','} size={25} backgroundColor="transparent" /></View>
                           <TextTypo size={25} fontFamily="Averta Bold" color="#ffffff" title={differenceInYears(new Date(), parse(user?.date_of_birth || '', "dd-MM-yyyy", new Date()))} />
                         </View> : <></>}
@@ -242,7 +242,7 @@ export default function Dashboard({ navigation }: any) {
                 setIndexValue(index)
               }}
               // cardStyle={{ borderRadius: 16 }}
-              cardHorizontalMargin={20}
+              cardHorizontalMargin={5}
               cardVerticalMargin={50}
               showSecondCard={true}
               cardIndex={0}
@@ -323,21 +323,21 @@ export default function Dashboard({ navigation }: any) {
                 
               <TextTypo ml={10} title="Info" />
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap'}}>
-                      {userInfo.height && <Chip style={styles.infoStyle}>{userInfo?.height}</Chip>}
-                      {userInfo.intention && <Chip style={styles.infoStyle}>{userInfo.intention}</Chip>}
-                      {userInfo.workout && <Chip style={styles.infoStyle}>{userInfo.workout}</Chip>}
-                      {userInfo.searching_for && <Chip style={styles.infoStyle}>{userInfo.searching_for}</Chip>}
-                      {userInfo.education && <Chip style={styles.infoStyle}>{userInfo.education}</Chip>}
-                      {userInfo.religion && <Chip style={styles.infoStyle}>{userInfo.religion}</Chip>}
-                    {userInfo.drinking && <Chip style={styles.infoStyle}>{userInfo.drinking}</Chip>}
-                      {userInfo.smoking && <Chip style={styles.infoStyle}>{userInfo.smoking}</Chip>}
+                      {userInfo.height && <Chip style={styles.infoStyle}><TextTypo color="#ffffff" title={userInfo?.height}/></Chip>}
+                      {userInfo.intention && <Chip style={styles.infoStyle}><TextTypo color="#ffffff" title={userInfo.intention}/></Chip>}
+                      {userInfo.workout && <Chip style={styles.infoStyle}><TextTypo color="#ffffff" title={userInfo.workout}/></Chip>}
+                      {userInfo.searching_for && <Chip style={styles.infoStyle}><TextTypo color="#ffffff" title={userInfo.searching_for}/></Chip>}
+                      {userInfo.education && <Chip style={styles.infoStyle}><TextTypo color="#ffffff" title={userInfo.education}/></Chip>}
+                      {userInfo.religion && <Chip style={styles.infoStyle}><TextTypo color="#ffffff" title={userInfo.religion}/></Chip>}
+                    {userInfo.drinking && <Chip style={styles.infoStyle}><TextTypo color="#ffffff" title={userInfo.drinking}/></Chip>}
+                      {userInfo.smoking && <Chip style={styles.infoStyle}><TextTypo color="#ffffff" title={userInfo.smoking}/></Chip>}
                   </View>
           
                   <TextTypo mt={15} ml={10} title="Interests" />
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                   {userInfo.interests?.map((interest, index) => (
-                      <Chip key={index} compact style={{margin: 4}}>
-                      <TextTypo title={ interest} />
+                      <Chip key={index}  compact style={{margin: 4, backgroundColor:'#5f1489'}}>
+                      <TextTypo color="#ffffff" title={ interest} />
                       </Chip>
                   ))}
            
@@ -346,8 +346,8 @@ export default function Dashboard({ navigation }: any) {
                     <TextTypo mt={15} ml={10} title="Sports" />
                     <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                   {userInfo.sports?.map((sport, index) => (
-                      <Chip key={index} compact style={{margin: 4}}>
-                      <TextTypo title={ sport} />
+                      <Chip key={index} compact style={{margin: 4, backgroundColor:'#5f1489'}}>
+                      <TextTypo color="#ffffff" title={ sport} />
                       </Chip>
                   ))}
            
@@ -442,7 +442,9 @@ const styles = StyleSheet.create({
     padding: 5
   },
   infoStyle: {
-    margin: 10
+    margin: 10,
+    backgroundColor: '#5f1489',
+    color: '#ffffff'
   },
   swipeMatchContainer: {
     flex: 1,

@@ -144,7 +144,7 @@ export default function Home() {
                 </View>
             </TouchableOpacity>,
             headerRight: (props) => (<IconButton onPress={() => dispatch(openActionSheetModal(true))} style={{ backgroundColor: 'none' }} size={20} iconColor="#5f1489" icon="dots-vertical" />),
-                headerLeft: (props) => (<TouchableWithoutFeedback onPress={() => {
+                headerLeft: (props) => (<TouchableWithoutFeedback style={{padding: 20}} onPress={() => {
                     dispatch(openProfileModal(false))
                     navigation.navigate('user')
             }}>
@@ -269,7 +269,7 @@ const TabPage = () => {
           }}
         >
             <Tab.Screen name="profile" component={profileScreen} options={{
-                tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="account-outline" color={color} size={size} />,
+                tabBarIcon: ({ color, size, focused }) => <MaterialCommunityIcons name={focused ? "account" : "account-outline"} color={focused ? '#5f1489' : color} size={size} />,
                     tabBarLabel: '',
                 
             }} />
@@ -281,12 +281,12 @@ const TabPage = () => {
                 }} />
             
             <Tab.Screen name="userLike" component={userLikeScreen} options={{
-                tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="cards-heart-outline" color={color} size={size} />,
+                tabBarIcon: ({ color, size, focused }) => <MaterialCommunityIcons name={focused ? "cards-heart" : "cards-heart-outline" } color={focused ? '#5f1489' : color} size={size} />,
                 tabBarLabel: '',
             }} />
 
             <Tab.Screen name="user" component={matchScreen} options={{
-                    tabBarIcon: ({ color, size }) => <View style={{position: 'relative'}}><MaterialCommunityIcons name="chat-outline" color={color} size={size} /><Badge size={5} visible={user_message.length > 0} style={{position: 'absolute'}} /></View>,
+                    tabBarIcon: ({ color, size, focused }) => <View style={{position: 'relative'}}><MaterialCommunityIcons name={focused ? "chat" : "chat-outline" } color={focused ? '#5f1489' : color} size={size} /><Badge size={5} visible={user_message.length > 0} style={{position: 'absolute'}} /></View>,
                 tabBarLabel: ''
             }} />
         </Tab.Navigator>

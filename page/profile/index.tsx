@@ -149,18 +149,19 @@ export default function ProfileScreen({navigation}: any) {
               if (initSheet.error) {
                 Alert.alert(initSheet.error.message)
               }
-
+              console.log(response)
               const presentSheet = await stripe.presentPaymentSheet();
               console.log(presentSheet)
               if (presentSheet.error) {
+                setDisabled(false)
                 return Alert.alert(presentSheet.error.message)
               }
-
+              setDisabled(false)
               Alert.alert('Upgrade successful')
               return;
             }
-            setDisabled(false)
             Alert.alert(response.message)
+            setDisabled(false)
         }}>Upgrade Plan</Button>
           </View>
           </SafeAreaView>
