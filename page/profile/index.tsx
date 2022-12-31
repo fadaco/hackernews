@@ -63,8 +63,9 @@ export default function ProfileScreen({navigation}: any) {
   
   useFocusEffect(
     useCallback(() => {
-     dispatch(getUser());
-     // console.log('jdjdjdj')
+      dispatch(getUser());
+      console.log(navigation)
+      console.log('jdjdjdj')
     }, [])
   );
 

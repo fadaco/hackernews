@@ -2,12 +2,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system';
 
 
-//export const BASE_URL = 'https://krossbirdsapp-production.up.railway.app/api';
+export const BASE_URL = 'https://krossbirdsapp-production.up.railway.app/api';
 //export const BASE_URL = 'http://10.0.2.2:9000/api'
-export const BASE_URL = 'http://127.0.0.1:9000/api';
-//export const URL = 'https://krossbirdsapp-production.up.railway.app/'
+//export const BASE_URL = 'http://127.0.0.1:9000/api';
+export const URL = 'https://krossbirdsapp-production.up.railway.app/'
 export const EMPTY_URL = 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=is&k=20&c=_o_WQ-NIhIyiDOBe5kEHl9QAyUNeYxWz0d-oJkC2znk=';
-export const URL = 'http://127.0.0.1:9000/'
+//export const URL = 'http://127.0.0.1:9000/'
 //export const URL = 'http://10.0.2.2:9000/'
 export const TOP_STORIES_IDS = '/topstories.json?print=pretty';
 export const EMAIL_AND_PHONE_LOGIN = '/user';

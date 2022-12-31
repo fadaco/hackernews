@@ -27,8 +27,8 @@ export default function Login({navigation}: any) {
   };
  
   return (
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
     <SafeAreaView style={styles.container}>
-      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         <>
       <TextTypo fw="bold" size={25} mb={20} title="Kindly provide the following"/>
       <View>
@@ -60,8 +60,8 @@ export default function Login({navigation}: any) {
         setLoading(false)
           }} />
           </>
-        </TouchableWithoutFeedback>
       </SafeAreaView>
+      </TouchableWithoutFeedback>
     )
 };
 
