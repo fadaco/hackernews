@@ -167,12 +167,7 @@ export default function Dashboard({ navigation }: any) {
           </View>
         </SafeAreaView> :
         (userList.length ? 
-          <ScrollView refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-            />
-          }>
+          <View>
             <SafeAreaView style={{paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}}>
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, zIndex: 999999 }}>
                 <View/>
@@ -261,15 +256,12 @@ export default function Dashboard({ navigation }: any) {
                 onSwiped={(index) => {
                 setIndexValue(index)
               }}
-              // cardStyle={{ borderRadius: 16 }}
               cardHorizontalMargin={8}
               cardVerticalMargin={50}
               showSecondCard={true}
               cardIndex={0}
               stackSize={5}
-            ///  verticalSwipe={false}
               backgroundColor={'transparent'}
-              // stackSize={1}
                 ref={(swiper) => {
                   outsideSwipe= swiper
                   setSwipe(swiper)
@@ -320,7 +312,7 @@ export default function Dashboard({ navigation }: any) {
            </SafeAreaView>
   
             
-          </ScrollView> :
+          </View> :
           <SafeAreaView style={{flex: 1, backgroundColor: '#5f1489', justifyContent: 'center', alignItems: 'center'}}>
             <Image resizeMode='contain' style={{width: 80, height: 80}} source={require('../assets/icons/logo.png')}/>
           </SafeAreaView>)
@@ -444,19 +436,19 @@ const styles = StyleSheet.create({
     paddingBottom: 10
   },
   card: {
-   flex: 1,
+   //flex: 1,
     borderRadius: 16,
     borderColor: "#E8E8E8",
     justifyContent: "center",
     backgroundColor: "none",
     position: 'relative',
     marginTop: 40,
-     height: '88%',
-    // shadowColor: '#000',
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowOpacity: 0.5,
-    // shadowRadius: 2,
-    // elevation: 2,
+    height: '88%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 2,
+    elevation: 2,
   },
   text: {
     textAlign: "center",
