@@ -144,12 +144,12 @@ export default function Home() {
                 </View>
             </TouchableOpacity>,
             headerRight: (props) => (<IconButton onPress={() => dispatch(openActionSheetModal(true))} style={{ backgroundColor: 'none' }} size={20} iconColor="#5f1489" icon="dots-vertical" />),
-                headerLeft: (props) => (<TouchableWithoutFeedback style={{padding: 20}} onPress={() => {
+                headerLeft: (props) => (<TouchableOpacity style={{paddingRight: 20, paddingVertical: 20}} onPress={() => {
                     dispatch(openProfileModal(false))
                     navigation.navigate('user')
             }}>
                 <Image source={require('../assets/icons/back.png')}/>
-            </TouchableWithoutFeedback>),
+            </TouchableOpacity>),
         })} initialParams={{ itemId: 42 }} />
 
         <Stack.Screen name="profileDetail" component={profileDetailScreen} options={{

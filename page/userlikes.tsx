@@ -1,4 +1,4 @@
-import { View, StyleSheet, FlatList, Image } from "react-native";
+import { View, StyleSheet, FlatList, Image, Platform, StatusBar } from "react-native";
 import SafeAreaView from 'react-native-safe-area-view';
 import { useSelector } from "react-redux";
 import TextTypo from "../components/textTypo";
@@ -34,7 +34,8 @@ export default function UserLikeScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'rgba(95, 20, 137, 0.9)'
+        backgroundColor: 'rgba(95, 20, 137, 0.9)',
+        paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
     },
     header: {
         marginBottom: 50,

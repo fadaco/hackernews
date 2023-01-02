@@ -1,17 +1,20 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, TouchableWithoutFeedback, FlatList, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Image, Platform, TouchableOpacity,StatusBar, TouchableWithoutFeedback, FlatList, RefreshControl } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux'
-import { getUserList, dispatchUserDetailToChat, reloadPage } from '../store/actions/match.actions';
+import { getUserList, dispatchUserDetailToChat, reloadPage, filterUserMatch } from '../store/actions/match.actions';
 import SafeAreaView from 'react-native-safe-area-view';
 import { Avatar, Chip, Button, Modal } from 'react-native-paper';
 import { User } from '../store/type'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CachedImage from '../components/cachedImage';
 import { URL, EMPTY_URL, PLACEHOLDER_IMAGE } from '../config';
 import Swiper from 'react-native-deck-swiper';
 import TextTypo from '../components/textTypo';
+import {Slider} from '@miblanchard/react-native-slider';
 import ActionSheet, { ActionSheetRef } from "react-native-actions-sheet";
 import * as Location from 'expo-location';
 import socket from '../shared/socket';
+import { INTERESTED } from '../data';
 import { differenceInYears, parse } from 'date-fns';
 
 const wait = (timeout: number) => {
@@ -25,6 +28,11 @@ export default function Dashboard({ navigation }: any) {
   const [matchFound, setMatchFound] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
   const [count, setCount] = useState<number>(0)
+  const [payload, setPayload] = useState<any>({
+    interested: 'Man',
+    minAge: 18,
+    maxAge: 40
+  });
   const [userInfo, setUserInfo] = useState<User>({});
   const [swipedImage, setSwipedImage] = useState<string>('');
   const [item, setItem] = useState<User>({})
@@ -33,6 +41,7 @@ export default function Dashboard({ navigation }: any) {
   const [userLocation, setUserLocation] = useState<any>(null)
   const actionSheetRef = useRef<ActionSheetRef>(null);
   const expireCountActionSheetRef = useRef<ActionSheetRef>(null);
+  const filterActionSheetRef = useRef<ActionSheetRef>(null);
   const [userDailySwipeCount, setUserDailySwipeCount] = useState<number>(0);
   let swipeRef: any = '';
   const [swipe,setSwipe]= useState<any>('');
@@ -52,6 +61,7 @@ export default function Dashboard({ navigation }: any) {
       setRefreshing(false)
     });
   }, []);
+
 
   useEffect(() => {
     if (indexValue === (userList.length - 1)) {
@@ -163,11 +173,17 @@ export default function Dashboard({ navigation }: any) {
               onRefresh={onRefresh}
             />
           }>
-            <SafeAreaView>
-            <View style={styles.logo}>
-            <Image style={{height: '100%', width: '100%'}} source={require('../assets/logo_purple.png')}/>
-            </View>
-            <Swiper
+            <SafeAreaView style={{paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, zIndex: 999999 }}>
+                <View/>
+                <View style={styles.logo}>
+                <Image style={{height: '100%', width: '100%'}} source={require('../assets/logo_purple.png')}/>
+                </View>
+                <TouchableOpacity onPress={() => filterActionSheetRef.current?.show()}>
+                <MaterialCommunityIcons name="filter-variant" color={'#5f1489'} size={30}/>
+                </TouchableOpacity>
+                </View>
+                <Swiper
               cards={userList}
               renderCard={(user: User, cardIndex: number) => {
                 return (
@@ -177,10 +193,10 @@ export default function Dashboard({ navigation }: any) {
                         <Image defaultSource={{ uri: PLACEHOLDER_IMAGE }} style={{ height: '100%', width: '100%', borderRadius: 16 }} source={{
                           uri: user?.images?.length ? (URL + '' + user.images[0].image) : EMPTY_URL
                         }} />
-                        {user?.full_name ? <View style={{ flexDirection: 'row', width: '50%', position: 'absolute', left: 10, bottom: 150 }}>
+                        {user?.full_name ? <View style={{ flexDirection: 'row', width: '50%', position: 'absolute', left: 10, bottom: 120 }}>
                           <View style={{ marginRight: 6 }}><TextTypo fontFamily="Averta Bold" color="#ffffff" title={user?.full_name + ','} size={25} backgroundColor="transparent" /></View>
                           <TextTypo size={25} fontFamily="Averta Bold" color="#ffffff" title={differenceInYears(new Date(), parse(user?.date_of_birth || '', "dd-MM-yyyy", new Date()))} />
-                        </View> : <></>}
+                        </View> : <><TextTypo title="jhfddjh"/></>}
   
                         {user?.full_name && <View style={styles.swipeContainer}>
                           <TouchableOpacity style={styles.swipeButton} onPress={() => {
@@ -216,7 +232,10 @@ export default function Dashboard({ navigation }: any) {
                           </TouchableOpacity>
                         </View>}
                       </View> : <></>}
+
+
                   </TouchableWithoutFeedback>
+
                 )
               }}
             
@@ -227,13 +246,14 @@ export default function Dashboard({ navigation }: any) {
                   expireCountActionSheetRef.current?.show()
                 } else {
                   setSwipedImage(userList[index].images[0].image)
-                setItem(userList[index])
+                  setItem(userList[index])
                 socket.emit('swipe', {
                   senderId: _id,
                   receiverId: userList[index]._id,
                   type: 'like',
                   socket_id: socket_id,
                   swipe_count: userDailySwipeCount,
+                  deviceId: userList[index].deviceId
                 })
                 }
                 setUserDailySwipeCount(userDailySwipeCount - 1)
@@ -242,7 +262,7 @@ export default function Dashboard({ navigation }: any) {
                 setIndexValue(index)
               }}
               // cardStyle={{ borderRadius: 16 }}
-              cardHorizontalMargin={5}
+              cardHorizontalMargin={8}
               cardVerticalMargin={50}
               showSecondCard={true}
               cardIndex={0}
@@ -296,6 +316,7 @@ export default function Dashboard({ navigation }: any) {
               animateOverlayLabelsOpacity
               animateCardOpacity
             />
+
            </SafeAreaView>
   
             
@@ -375,6 +396,42 @@ export default function Dashboard({ navigation }: any) {
           <Button labelStyle={{ fontFamily: 'Averta'}} style={{borderRadius: 8, backgroundColor: '#5f1489'}} mode="contained">Upgrade your Plan Now</Button>
         </View>
       </ActionSheet>
+      <ActionSheet ref={filterActionSheetRef} containerStyle={{ height: Platform.OS === 'android' ? '45%' : '35%', backgroundColor: '#ffffff', paddingVertical: 20 }}>
+        <View style={{ paddingHorizontal: 30 }}>
+          <TextTypo fontFamily="Averta Bold" color="#5f1489" size={20} title="Match Filters" />
+          <TextTypo mt={20} mb={10} title="I want to meet" />
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+      {INTERESTED.map((category: string, index: number) => (
+        <TouchableOpacity style={payload.interested === category ? styles.selectedContainer : styles.selectContainer} onPress={() => setPayload({
+          ...payload,
+          interested: category
+          })} key={index}>
+            <TextTypo color={payload.interested === category ? '#ffffff' : '#000000'} title={category}  />
+          </TouchableOpacity>
+        ))}
+          </View>
+          <TextTypo mt={20} title={'Between ' + payload.minAge + ' to ' + payload.maxAge + ' years old'   } />
+          <Slider
+            animateTransitions
+            minimumValue={0}
+            maximumValue={100}
+            value={[payload.minAge, payload.maxAge]}
+            thumbTintColor="#5f1489"
+            minimumTrackTintColor="#5f1489"
+            onValueChange={(value: any) => {
+              setPayload({
+                ...payload,
+                minAge: value[0].toFixed(),
+                maxAge: value[1].toFixed()
+              })
+            }}
+          />
+          <Button onPress={() => {
+            dispatch(filterUserMatch(payload))
+            filterActionSheetRef.current?.hide()
+          }} style={{ backgroundColor: '#5f1489', borderRadius: 6, marginTop: 20, marginBottom: 5}} mode="contained" labelStyle={{fontFamily: 'Averta'}}>Done</Button>
+        </View>
+      </ActionSheet>
     </View>
     )
 }
@@ -387,12 +444,19 @@ const styles = StyleSheet.create({
     paddingBottom: 10
   },
   card: {
-    flex: 1,
+   flex: 1,
     borderRadius: 16,
     borderColor: "#E8E8E8",
     justifyContent: "center",
     backgroundColor: "none",
-    position: 'relative'
+    position: 'relative',
+    marginTop: 40,
+     height: '88%',
+    // shadowColor: '#000',
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowOpacity: 0.5,
+    // shadowRadius: 2,
+    // elevation: 2,
   },
   text: {
     textAlign: "center",
@@ -400,6 +464,23 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
      fontFamily: 'Averta Bold',
     color: '#ffffff',
+  },
+  selectContainer: {
+    backgroundColor: '#F4F3F3',
+     borderRadius: 8,
+     height: 32,
+     width: 102,
+     alignItems: 'center',
+    justifyContent: 'center'
+  },
+  selectedContainer: {
+    backgroundColor: '#5f1489',
+    borderRadius: 8,
+    height: 32,
+    width: 102,
+    alignItems: 'center',
+    justifyContent: 'center',
+   color: '#ffffff'
   },
   actionsheet: {
     padding: 20,
@@ -414,7 +495,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     alignSelf: 'center',
-    bottom: 50,
+    bottom: 30,
     padding: 20,
     width: '92%',
     height: 80,
@@ -435,11 +516,11 @@ const styles = StyleSheet.create({
     width: 140,
     height: 40,
     backgroundColor: 'rgba(255, 255, 255, 0.73)',
-    position: 'relative',
-    zIndex: 999999,
-    alignSelf: 'center',
+   position: 'relative',
+   zIndex: 999999,
+   alignSelf: 'center',
     borderRadius: 5,
-    padding: 5
+    padding: 5,
   },
   infoStyle: {
     margin: 10,
@@ -477,8 +558,8 @@ const styles = StyleSheet.create({
     bottom: -50,
   },
   imageInfo: {
-    height: 200,
-    width: 150,
+    height: 300,
+    width: '100%',
     margin: 5,
     borderRadius: 10
   },

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { View, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Alert, Platform } from "react-native";
 import SafeAreaView from 'react-native-safe-area-view';
 import TextTypo from "../../components/textTypo";
 import { Avatar, Button, Switch } from "react-native-paper";
@@ -116,7 +116,8 @@ const styles = StyleSheet.create({
     button: {
         borderRadius: 6,
         backgroundColor: '#F4F4F4',
-        marginTop: 15
+        marginTop: 15,
+        marginBottom: Platform.OS === 'android' ? 20 : 1
     },
     buttonText: {
         color: '#000000'

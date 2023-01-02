@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { FlatList, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { FlatList, View, Image, StyleSheet, TouchableOpacity, Platform, StatusBar } from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
 import CachedImage from '../components/cachedImage';
 import { useFocusEffect } from '@react-navigation/native';
@@ -27,7 +27,7 @@ export default function MatchScreen({ navigation }: any) {
       );
     
     return (
-        <SafeAreaView style={{ paddingHorizontal: 20, backgroundColor: '#ffffff', flex: 1}}>
+        <SafeAreaView style={{ paddingHorizontal: 20, backgroundColor: '#ffffff', flex: 1, paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}}>
             {user_matches.length ? <TextTypo size={18} color="#251E1C" mt={20} title="New Matches" /> : <></>}
             <View>
             <FlatList

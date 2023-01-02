@@ -18,6 +18,7 @@ export const UPLOAD_IMAGE_PROFILE = '/upload-image';
 export const USER = '/user';
 export const UPGRADE_SUBSCRIPTION_PLAN = '/upgrade-plan';
 export const USER_LIST = '/user-list';
+export const USER_FILTER_LIST = '/filter-user-list';
 export const USER_MATCHES = '/user-match';
 export const CONVERSATIONS = '/conversations';
 export const LIKES = '/likes';

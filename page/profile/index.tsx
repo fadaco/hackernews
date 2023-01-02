@@ -65,7 +65,6 @@ export default function ProfileScreen({navigation}: any) {
     useCallback(() => {
       dispatch(getUser());
       console.log(navigation)
-      console.log('jdjdjdj')
     }, [])
   );
 
