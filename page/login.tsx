@@ -38,7 +38,7 @@ export default function Login({navigation}: any) {
           value={userParam.email?.toLowerCase()}
           onChangeText={text => handleUserInput(text, 'email')} />
         <PhoneInput
-          defaultCode="NG"
+          defaultCode="US"
           textContainerStyle={{ backgroundColor: '#ffffff' }}
           layout="first"
           onChangeFormattedText={(text) => handleUserInput(text, 'phone_number')}

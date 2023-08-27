@@ -32,7 +32,6 @@ export default function App() {
   }, [fontsLoaded])
   
 
-
   return (
     <Provider store={store}>
       <StripeProvider publishableKey="pk_test_51MIcL0LjQXh9ZYRptYohMsf9d4CzOpR8vE04FB0mk1FSvLJ8ow2nMNPr5hxYkMvXmKTfkPeoDetschIDMZME7eqa006e6dNYUQ">

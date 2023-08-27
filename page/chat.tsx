@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import SafeAreaView from 'react-native-safe-area-view';
-import { Avatar, Modal, Chip} from 'react-native-paper';
-import { Actions, ActionsProps, GiftedChat, IMessage } from 'react-native-gifted-chat'
+import { Avatar, Modal, Chip, Button} from 'react-native-paper';
+import { Actions, ActionsProps, GiftedChat, IMessage, Composer } from 'react-native-gifted-chat'
 import * as ImagePicker from 'expo-image-picker';
 import { useDispatch, useSelector } from 'react-redux';
 import { openActionSheetModal, openProfileModal } from '../store/actions/user.actions';
@@ -22,7 +22,6 @@ export default function Chatcreen({ route,itemId, navigation }:any) {
     const actionSheetRef = useRef<ActionSheetRef>(null);
     const { user_chat, user_message, actionSheet, user_send_message, profileModal} = useSelector((state: any) => state.match);
     const dispatch: any = useDispatch();
-console.log(user_chat)
     useEffect(() => {
         dispatch(getConversations());
         setMessages([]);  
@@ -86,12 +85,15 @@ console.log(user_chat)
             />)
     }
 
+  
+
     return (
         <SafeAreaView style={styles.container}>
             <GiftedChat
                 placeholder="Write something..."
                 inverted={false}
                 showUserAvatar={false}
+               // renderComposer={}
                 renderActions={renderActions}
                 showAvatarForEveryMessage={true}
                 renderAvatar={() => null}

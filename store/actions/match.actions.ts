@@ -1,17 +1,21 @@
 import { Dispatch } from 'redux';
 import { SERVER_REQUEST, USER_LIST, USER_FILTER_LIST, USER_MATCHES, CONVERSATIONS, LIKES, BLOCK_USER, UNMATCH_USER, SAVE_PUSH_NOTIFICATION_TOKEN, UPGRADE_SUBSCRIPTION_PLAN } from '../../config';
-import { UserList, LIST_USER, USER_MATCH, User, USER_CHAT, USER_CONVERSATION, USER_LIKES, RELOAD_ALL_PAGE, CLEAR_USER_CHAT, UPGRADE_PLAN } from '../type';
+import { UserList, LIST_USER, USER_MATCH, User, USER_CHAT, USER_CONVERSATION, USER_LIKES, RELOAD_ALL_PAGE, CLEAR_USER_CHAT, UPGRADE_PLAN, LOADING } from '../type';
 
-export const getUserList = (payload:UserList) => async (dispatch: Dispatch) =>  {
+export const getUserList = (payload: UserList) => async (dispatch: Dispatch) => {
+    dispatch({ type: LOADING, payload: true });
     const response = await SERVER_REQUEST(USER_LIST, 'post', payload);
     const { userList } = response.data;
     dispatch({ type: LIST_USER, payload: userList });
+    dispatch({ type: LOADING, payload: false });
 }
 
 export const filterUserMatch = (payload: any) => async (dispatch: Dispatch) => {
+    dispatch({ type: LOADING, payload: true });
     const response = await SERVER_REQUEST(USER_FILTER_LIST, 'post', payload);
     const { userList } = response.data;
     dispatch({ type: LIST_USER, payload: userList });
+    dispatch({ type: LOADING, payload: false });
 }
 
 export const getUserMatches = () => async (dispatch: Dispatch) => {

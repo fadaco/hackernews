@@ -23,7 +23,7 @@ const wait = (timeout: number) => {
 
 let outsideSwipe:any = '';
 export default function Dashboard({ navigation }: any) {
-  const { userList, reload } = useSelector((state: any) => state.match);
+  const { userList, reload, loading } = useSelector((state: any) => state.match);
   const { _id, socket_id, images, swipe_count, subscription } = useSelector((state: any) => state.onboarding);
   const [matchFound, setMatchFound] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
@@ -61,7 +61,6 @@ export default function Dashboard({ navigation }: any) {
       setRefreshing(false)
     });
   }, []);
-
 
   useEffect(() => {
     if (indexValue === (userList.length - 1)) {
@@ -167,7 +166,6 @@ export default function Dashboard({ navigation }: any) {
           </View>
         </SafeAreaView> :
         (userList.length ? 
-          <View>
             <SafeAreaView style={{paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}}>
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, zIndex: 999999 }}>
                 <View/>
@@ -310,11 +308,9 @@ export default function Dashboard({ navigation }: any) {
             />
 
            </SafeAreaView>
-  
-            
-          </View> :
-          <SafeAreaView style={{flex: 1, backgroundColor: '#5f1489', justifyContent: 'center', alignItems: 'center'}}>
-            <Image resizeMode='contain' style={{width: 80, height: 80}} source={require('../assets/icons/logo.png')}/>
+               :
+          <SafeAreaView style={{ flex: 1, backgroundColor: '#5f1489', justifyContent: 'center', alignItems: 'center' }}>
+            {loading ? <Text style={{fontSize: 20, color: '#ffffff', fontWeight: 'bold'}}>Searching...</Text> : <Text style={{fontSize: 20, color: '#ffffff', fontWeight: 'bold'}}>No match found</Text>}
           </SafeAreaView>)
       }
       <ActionSheet ref={actionSheetRef} containerStyle={{ height: '60%', backgroundColor: '#ffffff', paddingVertical: 20 }}>

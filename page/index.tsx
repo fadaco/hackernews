@@ -48,6 +48,7 @@ const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 
+
 export default function Home() { 
     const { isLoggedIn } = useSelector((state: any) => state.user);
     const { _id } = useSelector((state: any) => state.onboarding);
@@ -108,6 +109,8 @@ export default function Home() {
         }
     }, [isLoggedIn, isProfileCompleted, reload])
 
+    console.log('log ', isProfileCompleted)
+
     useEffect(() => {
         registerForPushNotificationsAsync();
         Notifications.setNotificationHandler({
@@ -127,9 +130,19 @@ export default function Home() {
 
     }, [])
 
-    if ((isLoggedIn === 2 || isProfileCompleted === 2)) {
-        return  <Stack.Navigator>
-        <Stack.Screen name="landingHome" component={TabPage} options={{ headerShown: false }} />
+
+    return (
+        <Stack.Navigator screenOptions={{
+            headerBackTitleVisible: false,
+            headerShadowVisible: false,
+            headerTitleStyle: {
+                fontFamily: 'Averta',
+            },
+            headerTintColor: '#6b4ead'
+        }}>
+            {isLoggedIn === 2 || isProfileCompleted === 2 ?
+                <>
+                <Stack.Screen name="landingHome" component={TabPage} options={{ headerShown: false }} />
             <Stack.Screen name="chat" component={chatcreen} options={({ navigation }) => ({
                 headerTitle: (props) => <TouchableOpacity onPress={() => dispatch(openProfileModal(true))} style={{ flexDirection: 'row' }}>
                 <CachedImage style={{ height: 40, width: 40, borderRadius: 50, marginRight: 5 }} url={URL + '' + user_chat.images[0].image } />
@@ -195,18 +208,14 @@ export default function Home() {
             headerTitle: '',
             headerBackTitle: ''
         }} />
-    </Stack.Navigator>
-    } else if ((isLoggedIn === 1 || isProfileCompleted === 1)) {
-        return  <Stack.Navigator screenOptions={{
-            headerBackTitleVisible: false,
-            headerShadowVisible: false,
-            headerTitleStyle: {
-                fontFamily: 'Averta',
-            },
-            headerTintColor: '#6b4ead'
-        }}>
-           
-            <Stack.Screen name="landing" component={landingScreen} options={{
+                </> : 
+                <>
+                    {!isProfileCompleted ? <Stack.Screen name="loading" component={() =>
+                        <View style={{ flex: 1, backgroundColor: '#5f1489', justifyContent: 'center', alignItems: 'center' }}><Text
+                        style={{fontSize: 20, color: '#ffffff', fontWeight: 'bold'}}>loading...</Text></View>} options={{
+                            headerShown: false
+                        }} /> : <>
+                 <Stack.Screen name="landing" component={landingScreen} options={{
                 headerShown: false
             }} />
             <Stack.Screen name="login" component={loginScreen} options={{
@@ -249,13 +258,16 @@ export default function Home() {
              <Stack.Screen name="height" component={heightScreen} options={{
                headerTitle: ''
             }} />
-             
-        </Stack.Navigator> 
-    } else {
-        return <View style={{flex: 1, backgroundColor: '#5f1489'}}></View>
-    }
+                
+                </>}
+            
+                </>
+        }
+        </Stack.Navigator>
+    )
 
 }
+
 
 
 const TabPage = () => {
@@ -296,4 +308,5 @@ const TabPage = () => {
 
 
   
+
 

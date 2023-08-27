@@ -1,13 +1,12 @@
 import SafeAreaView from 'react-native-safe-area-view';
-import { Text, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import Logo from '../components/logo';
 import Footer from '../components/footer';
 
 export default function LandingScreen({navigation}: any) {
-  
   return (
     <SafeAreaView style={styles.container}>
-      <Logo type/>
+      <Logo type />
       <Footer isText title="Get Started" submitData={() => navigation.navigate('login')}/>
     </SafeAreaView>
   )

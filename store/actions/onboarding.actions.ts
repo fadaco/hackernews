@@ -50,7 +50,7 @@ export const uploadImage = async (payload: SetUpUserProfile) => {
     return response;
 }
  
-export const goToDashboard = (value: number) =>async (dispatch: Dispatch) => {
+export const goToDashboard = (value: number) => async (dispatch: Dispatch) => {
     dispatch({type: SET_LOGIN_IN, payload: value})
 
 }

@@ -113,3 +113,4 @@ export const OPEN_USER_PROFILE = 'OPEN_USER_PROFILE';
 export const RELOAD_ALL_PAGE = 'RELOAD_ALL_PAGE';
 export const CLEAR_USER_CHAT = 'CLEAR_USER_CHAT';
 export const UPGRADE_PLAN = 'UPGRADE_PLAN';
+export const LOADING = 'LOADING';
